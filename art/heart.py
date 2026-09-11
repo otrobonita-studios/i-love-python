@@ -25,7 +25,7 @@ class HeartPoint:
 def heart_point(t: float) -> HeartPoint:
     """Evaluate the parametric heart at parameter t (radians)."""
     x = 16.0 * math.sin(t) ** 3
-    y = 13.0 * math.cos(t) - 5.0 * math.cos(2.0 * t) - 2.0 * math.cos(3.0 * t)
+    y = 13.0 * math.cos(t) - 5.0 * math.cos(2.0 * t) - 2.0 * math.cos(3.0 * t) - math.cos(4.0 * t)
     return HeartPoint(x=x, y=y)
 
 
