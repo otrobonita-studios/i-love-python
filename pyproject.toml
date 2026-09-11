@@ -1,0 +1,53 @@
+[project]
+name = "i-love-python"
+version = "1.0.0"
+description = "A demo that proves it loves Python: live telemetry, review personas, git discipline, load testing — all in pure Python."
+requires-python = ">=3.12"
+dependencies = ["nicegui>=1.4.30"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "hypothesis",
+    "ruff",
+    "mypy",
+    "radon",
+    "bandit",
+    "pip-audit",
+    "mutmut",
+    "coverage",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "RUF"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+
+[[tool.mypy.overrides]]
+module = ["nicegui", "nicegui.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = ["slow: slow tests (deselect with -m 'not slow')"]
+
+[tool.coverage.run]
+source = ["art", "panel", "review", "git_discipline", "explain", "loadtest", "scripts"]
+omit = ["app.py", "*/render.py", "scripts/ci_yaml.py", "scripts/install_hooks.py"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.bandit]
+exclude_dirs = [".venv", "tests", "generated"]
+
+[tool.pytest-cov]
+fail_under = 70
