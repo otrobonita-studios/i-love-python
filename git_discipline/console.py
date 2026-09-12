@@ -10,7 +10,8 @@ in the history, so `git log -S` genuinely finds it.
 from __future__ import annotations
 
 import shlex
-import subprocess
+import shutil
+import subprocess  # nosec B404 - running the local git binary is this module's job
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -39,10 +40,16 @@ class StepResult:
     output: str
 
 
+GIT = shutil.which("git")
+
+
 def _git(args: list[str]) -> str:
+    if GIT is None:
+        raise RuntimeError("git executable not found on this machine")
     proc = subprocess.run(  # nosec B603 - fixed argv, no shell, git in our own repo
-        ["git", *args],
+        [GIT, *args],
         cwd=ROOT,
+        shell=False,
         capture_output=True,
         text=True,
         encoding="utf-8",

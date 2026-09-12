@@ -25,7 +25,8 @@ def valid_spec(parts: list[tuple[str, Any]]) -> LoadSpec:
     kwargs: dict[str, Any] = vars(LoadSpec())
     for key, value in parts:
         kwargs[key] = value
-    if kwargs["ramp_up_s"] + kwargs["hold_s"] + kwargs["ramp_down_s"] == 0:
+    # A load test must actually apply load for a positive duration.
+    if kwargs["ramp_up_s"] + kwargs["hold_s"] <= 0:
         kwargs["hold_s"] = 1
     return LoadSpec(**kwargs)
 

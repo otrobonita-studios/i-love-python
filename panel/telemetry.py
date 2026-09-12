@@ -162,13 +162,19 @@ def _parse_coverage_json() -> tuple[float | None, tuple[CoverageFile, ...]]:
     except (json.JSONDecodeError, OSError):
         return None, ()
     files = []
-    for rel, summary in sorted(data.get("files", {}).items()):
+    for rel, entry in sorted(data.get("files", {}).items()):
+        summary = entry.get("summary", {}) if isinstance(entry, dict) else {}
         covered = summary.get("covered_lines", 0)
         total = summary.get("num_statements", 0)
         if total == 0:
             continue
         files.append(
-            CoverageFile(path=rel, covered=covered, total=total, pct=100.0 * covered / total)
+            CoverageFile(
+                path=rel.replace("\\", "/"),
+                covered=covered,
+                total=total,
+                pct=100.0 * covered / total,
+            )
         )
     total_covered = data.get("totals", {}).get("covered_lines", 0)
     total_statements = data.get("totals", {}).get("num_statements", 0)

@@ -6,7 +6,8 @@ The review panel never invents diffs: it shows actual commits from
 
 from __future__ import annotations
 
-import subprocess
+import shutil
+import subprocess  # nosec B404 - running the local git binary is this module's job
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -23,10 +24,16 @@ class Commit:
     body: str
 
 
+GIT = shutil.which("git")
+
+
 def _git(args: list[str]) -> str:
-    proc = subprocess.run(  # nosec B603 - fixed argv, no shell, only git in our own repo
-        ["git", *args],
+    if GIT is None:
+        raise RuntimeError("git executable not found on this machine")
+    proc = subprocess.run(  # nosec B603 - fixed argv, no shell, git in our own repo
+        [GIT, *args],
         cwd=ROOT,
+        shell=False,
         capture_output=True,
         text=True,
         encoding="utf-8",

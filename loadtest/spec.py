@@ -36,6 +36,11 @@ class LoadSpec:
                 raise ValueError(f"{name} must be >= 0, got {value}")
         if self.ramp_up_s + self.hold_s + self.ramp_down_s == 0:
             raise ValueError("total duration must be > 0 seconds")
+        if self.ramp_up_s + self.hold_s <= 0:
+            raise ValueError(
+                "ramp_up_s + hold_s must be > 0: a load test that never applies "
+                "load has no duration of load to measure"
+            )
         if self.p95_ms <= 0:
             raise ValueError(f"p95_ms must be > 0, got {self.p95_ms}")
         if not 0 < self.error_rate < 1:

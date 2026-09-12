@@ -23,6 +23,8 @@ def test_defaults_are_valid() -> None:
         ({"endpoint": "no-slash"}, "endpoint"),
         ({"p95_ms": 0}, "p95_ms"),
         ({"ramp_up_s": 0, "hold_s": 0, "ramp_down_s": 0}, "duration"),
+        # A ramp-down-only test never applies load, so it is not a load test.
+        ({"ramp_up_s": 0, "hold_s": 0, "ramp_down_s": 3}, "duration of load"),
     ],
 )
 def test_invalid_specs_rejected(kwargs: dict[str, object], message: str) -> None:

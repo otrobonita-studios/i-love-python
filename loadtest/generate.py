@@ -100,3 +100,18 @@ def write_js(spec: LoadSpec, out: Path) -> Path:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(js, encoding="utf-8")
     return out
+
+
+def main() -> int:
+    """CLI: python -m loadtest.generate [out-path] -> writes the default spec's script."""
+    import sys
+
+    root = Path(__file__).resolve().parent.parent
+    out = Path(sys.argv[1]) if len(sys.argv) > 1 else root / "generated" / "k6" / "load.js"
+    written = write_js(LoadSpec(), out)
+    print(f"generated {written}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -33,8 +33,10 @@ def _iso(ts: float) -> str:
 def _get(url: str) -> tuple[int, str]:
     """One real HTTP GET. Returns (status, error); status 0 means no response."""
     try:
+        # The target URL is the whole point of this module.
         req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-        with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT_S) as resp:
+        # nosec B310 - http(s) URLs are exactly what a load test targets
+        with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT_S) as resp:  # nosec B310
             resp.read(2048)
             return resp.status, ""
     except urllib.error.HTTPError as exc:
@@ -139,7 +141,7 @@ def offline_fixture(seed: int = 7, requests_per_vu_s: float = 2.0) -> tuple[str,
     Returns the NDJSON text and the spec it was generated from, so the UI can
     show which settings the fixture used.
     """
-    rng = random.Random(seed)
+    rng = random.Random(seed)  # nosec B311 - simulated latency, not cryptographic
     spec = LoadSpec()
     base = datetime(2026, 1, 1, 0, 0, 0, tzinfo=UTC).timestamp()
     lines: list[str] = []

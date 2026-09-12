@@ -9,7 +9,7 @@ from __future__ import annotations
 import contextlib
 import json
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
@@ -114,42 +114,85 @@ def _build_series(
     return tuple(merged)
 
 
-def parse_ndjson(text: str, source: str = "k6") -> LoadReport:
-    """Turn k6-format NDJSON into a LoadReport. Never raises on bad lines."""
-    durations: list[float] = []
-    failed = 0
-    total = 0
-    states: list[tuple[float, int]] = []
-    points: list[tuple[float, float]] = []
+def _is_success(data: dict[str, Any]) -> bool:
+    """True when an http_req event represents a clean 200 without error."""
+    return str(data.get("status", "")) == "200" and not data.get("error", "")
+
+
+def _metric_value(event: dict[str, Any]) -> float | None:
+    """Duration from a Metric event, if it carries one."""
+    data = event.get("data", {})
+    if data.get("metric") != "http_req_duration":
+        return None
+    with contextlib.suppress(TypeError, ValueError):
+        return float(data.get("value"))
+    return None
+
+
+def _point_value(event: dict[str, Any], t: float | None) -> tuple[float, float] | None:
+    """(time, avg) from a Point event, if it carries one."""
+    if t is None:
+        return None
+    data = event.get("data", {})
+    if data.get("metric") != "http_req_duration":
+        return None
+    values = data.get("values", {})
+    with contextlib.suppress(TypeError, ValueError):
+        return (t, float(values.get("avg", 0.0)))
+    return None
+
+
+@dataclass
+class _Collected:
+    """Everything gathered in one pass over the event stream."""
+
+    durations: list[float] = field(default_factory=list)
+    failed: int = 0
+    total: int = 0
+    states: list[tuple[float, int]] = field(default_factory=list)
+    points: list[tuple[float, float]] = field(default_factory=list)
     first_time: float | None = None
     last_time: float | None = None
 
+
+def _collect(text: str) -> _Collected:
+    """One pass over the events, gathering everything the report needs."""
+    out = _Collected()
     for event in _iter_events(text):
         t = _event_time(event)
         if t is not None:
-            first_time = t if first_time is None else min(first_time, t)
-            last_time = t if last_time is None else max(last_time, t)
+            out.first_time = t if out.first_time is None else min(out.first_time, t)
+            out.last_time = t if out.last_time is None else max(out.last_time, t)
         etype = event.get("type")
-        data = event.get("data", {})
         if etype == "state":
-            vus = data.get("vus", 0)
+            vus = event.get("data", {}).get("vus", 0)
             if t is not None:
-                states.append((t, int(vus)))
+                out.states.append((t, int(vus)))
         elif etype == "http_req":
-            total += 1
-            status = str(data.get("status", ""))
-            error = data.get("error", "")
-            if status != "200" or error:
-                failed += 1
+            out.total += 1
+            if not _is_success(event.get("data", {})):
+                out.failed += 1
         elif etype == "Metric":
-            if data.get("metric") == "http_req_duration":
-                with contextlib.suppress(TypeError, ValueError):
-                    durations.append(float(data.get("value")))
+            value = _metric_value(event)
+            if value is not None:
+                out.durations.append(value)
         elif etype == "Point":
-            if data.get("metric") == "http_req_duration" and t is not None:
-                values = data.get("values", {})
-                with contextlib.suppress(TypeError, ValueError):
-                    points.append((t, float(values.get("avg", 0.0))))
+            point = _point_value(event, t)
+            if point is not None:
+                out.points.append(point)
+    return out
+
+
+def parse_ndjson(text: str, source: str = "k6") -> LoadReport:
+    """Turn k6-format NDJSON into a LoadReport. Never raises on bad lines."""
+    out = _collect(text)
+    durations = out.durations
+    failed = out.failed
+    total = out.total
+    states = out.states
+    points = out.points
+    first_time = out.first_time
+    last_time = out.last_time
 
     duration_s = (
         (last_time - first_time) if (first_time is not None and last_time is not None) else 0.0
