@@ -46,9 +46,9 @@ def commit_count() -> int:
 
 def list_commits() -> list[Commit]:
     """All commits, newest first, with body (trailers included)."""
-    out = _git(["log", "--pretty=format:%H%x1f%ad%x1f%s%x1f%b", "--date=short"])
+    out = _git(["log", "--pretty=format:%x00%H%x1f%ad%x1f%s%x1f%b", "--date=short"])
     commits: list[Commit] = []
-    for record in out.split("\x1f\n"):
+    for record in out.split("\x00"):
         if not record.strip():
             continue
         parts = record.split("\x1f", 3)
