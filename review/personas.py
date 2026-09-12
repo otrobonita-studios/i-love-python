@@ -97,7 +97,7 @@ def review_diff(diff: str, commit: str = "") -> Review:
     stats = extract_diff_stats(diff)
     verdicts = (purist(stats, diff), skeptic(diff), pragmatist(stats))
     worst = max(_TONE_RANK[v.tone] for v in verdicts)
-    consensus_tone = (TONE_BLOCK, TONE_CAUTION, TONE_OK)[worst]
+    consensus_tone = (TONE_OK, TONE_CAUTION, TONE_BLOCK)[worst]
     if consensus_tone == TONE_OK:
         consensus_note = "All three agree: this is fine to ship."
     elif consensus_tone == TONE_CAUTION:
