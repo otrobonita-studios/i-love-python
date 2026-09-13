@@ -9,35 +9,139 @@ Hand-authored source files must be `.py`. Non-Python source may exist **only** i
 3. it lives under `generated/`.
 
 `python scripts/lang_audit.py` enforces this and must exit 0. Do not disable it.
+See `MANIFEST.md` for the current table of generated artifacts and the script
+that owns each one.
+
+If a change genuinely needs a new generated artifact (another script, another
+hook, another doc page), write the Python generator first, let it write the
+output, and add a row to `MANIFEST.md`'s table — don't hand-author the output
+and add a `GENERATED` header after the fact.
 
 ## 2. No fakes
 
 Anything shown in the UI must come from a real tool run, a real git command, or a
 clearly-labelled simulator/fixture. If a tool is unavailable, report
-"unavailable" — never invent a passing result.
+"unavailable" — never invent a passing result. The same standard applies to
+anything an agent reports back to a human: a coverage number, a test count, a
+"CI is green" claim — measure it, don't infer it from memory or from what the
+code is *supposed* to do.
 
-## 3. Commits
+## 3. Working in a shared checkout
 
-- Small, atomic, imperative subject (`fix: restore cos(4t) term in heart curve`).
-- Trailer every commit with the spec requirement it satisfies:
-  `Manifest: <short spec reference>`.
-- Never amend or rewrite published history — this repo *is* the git-discipline demo.
+More than one agent session may be pointed at this exact working directory at
+the same time — not separate clones of it. Treat that as a standing condition,
+not an edge case:
 
-## 4. Tests
+- **Re-read before you write.** If you haven't looked at a file in this turn,
+  assume another session may have changed it since. A stale edit silently
+  overwrites someone else's work.
+- **Found an uncommitted change you didn't make?** Don't revert or "clean it
+  up" on your own judgement — surface it to the human and ask. It's probably
+  another agent's in-progress work, not debris.
+- **File edits are low-risk; git ref operations are not.** Writing a file
+  and running `git add`/`git commit` for *your own* change is fine. Anything
+  that rewrites what a branch points at — `git reset --hard`, `git checkout
+  -B`, force-push, history rewrites — can silently pull the working tree out
+  from under another session mid-edit. Confirm no other agent is active
+  before running one of these, and prefer the non-destructive form when one
+  exists (`git branch -m` to rename instead of branch-then-reset, for
+  example).
+- **A blocked pre-commit hook may not be about your change.** The hook runs
+  the fast quality gate over fixed target directories, not your staged diff —
+  if it fails on a file you didn't touch, that's someone else's in-progress
+  work, not a bug in your commit. Fix it (if the fix is mechanical, like a
+  formatter) or flag it; don't reach for `--no-verify` to get past it.
+
+## 4. Commit discipline
+
+- **Atomicity.** One commit = one independently revertible change. If fixing
+  one issue surfaces a second, unrelated one, commit them separately, in the
+  order discovered. Never squash unrelated fixes into a single commit.
+- **Message format.** `type(scope): summary` — `type` is `feat`, `fix`,
+  `chore`, `test`, or `docs`; `scope` names the subsystem touched (e.g.
+  `fix(loadtest)`, `feat(panel)`). The summary line says what changed; the
+  body says why — the failure mode found, the root cause, what was verified.
+  A message like "fixes" carries no diagnostic value for a future `git blame`
+  or `git bisect` and is not acceptable.
+- **`Manifest:` trailer.** Every commit still carries `Manifest: <short spec
+  reference>`, tying it to the requirement in `docs/spec.md` it satisfies — this
+  repo's history is read by its own Review and Git-discipline tabs, so the
+  trailer is load-bearing, not decorative.
+- **`Verified:` / `Rejected:` trailers (optional, encouraged).** `Verified:`
+  says how the change was confirmed to work (tests run, tool output read,
+  manually exercised). `Rejected:` records an alternative that was considered
+  and discarded, so it isn't re-proposed later. Both are plain git trailers —
+  free, native, and they preserve decision context a diff alone doesn't
+  carry.
+- **Attribution trailers.** Do not add `Co-Authored-By: Claude` or
+  "Generated with Claude Code" to commits or PR descriptions. Some agent
+  tooling appends its own `Co-Authored-By:` trailer and cannot be told to
+  omit it from within a session — that's fine, don't strip another tool's
+  own attribution from its commits. What to avoid is adding anything
+  *promotional* beyond a plain trailer (marketing footers in commit bodies
+  or PR descriptions).
+- **Never amend or rewrite published history.** This repo *is* the
+  git-discipline demo — its own commit log, warts included, is content the
+  Review and Git-discipline tabs read.
+
+## 5. Branching & publishing to GitHub
+
+New work happens on a branch, not directly on `main` — merge to `main` via a
+PR, even for solo work. (Commits 948e008 through 174c442 predate this rule and
+live on `main` directly; that's the one thing about this repo's own history
+that doesn't model the convention it now documents.)
+
+- Branch names: `type/short-description` (e.g. `feat/coverage-suites`),
+  matching the commit-type vocabulary above.
+- **Never push without an explicit human go-ahead**, including from a
+  feature branch — this holds even when the quality gate is fully green
+  locally. Pushing publishes to a shared, world-visible remote.
+- Once pushed, a branch's history is shared — no force-push, no rebase of
+  commits another session might have already fetched.
+- To publish: `git push -u origin <branch>`, then open the PR against `main`
+  and let CI run before merging (`.github/workflows/ci.yml`, generated by
+  `scripts/ci_yaml.py`).
+
+## 6. Tests
 
 - Logic lives in `art/`, `panel/`, `review/`, `git_discipline/`, `explain/`,
-  `loadtest/` — all must be importable without NiceGUI running and testable headless.
-- `tests/unit/` fast, `tests/property/` hypothesis, `tests/integration/` full loop.
-- `pytest` must pass with `--cov` and `fail_under = 70` before any commit.
+  `loadtest/` — all must be importable without NiceGUI running and testable
+  headless.
+- `tests/unit/` fast, `tests/property/` hypothesis, `tests/integration/` full
+  loop.
+- `pytest` must pass with `--cov` and the coverage floor in
+  `[tool.coverage.report] fail_under` before any commit. If you touch that
+  number, touch it on purpose — it's a real gate, not a display value.
 
-## 5. UI
+## 7. UI
 
 NiceGUI. UI code lives in `app.py` and `*/render.py` (excluded from coverage by
 design — logic is what's measured). Keep render functions thin; no business logic
 in UI modules.
 
-## 6. Tooling
+## 8. Tooling
 
 Python ≥ 3.12, ruff (format + lint), mypy `--strict`, radon, bandit, pip-audit.
 Config lives in `pyproject.toml`. Don't add new top-level dependencies casually;
 the dependency list is part of the audit surface.
+
+A generator module that emits a large embedded template (HTML, YAML, JS) may
+carry its own `[tool.ruff.lint.per-file-ignores]` entry for line-length —
+wrapping markup at 100 columns fights the template instead of clarifying it.
+Scope any such ignore to that one file and say why in a comment; never widen
+line-length or disable a rule repo-wide to work around one generator.
+
+## 9. Releasing
+
+Before tagging a version:
+
+- Confirm the version in `pyproject.toml` actually matches the repo's
+  maturity — this is demo software with real gaps tracked openly (see the
+  gap list in `docs/spec.md`'s status header for the current ones); don't
+  ship `1.0.0` on the strength of a green quality panel alone.
+- Confirm `.github/workflows/ci.yml` is the live copy of
+  `generated/ci/ci-pipeline.yml`, not just present in `generated/` — GitHub
+  only runs what's under `.github/workflows/`.
+- Regenerate `generated/docs/wiring-diagram.html` if the wiring changed
+  (`python -m scripts.wiring_diagram`) so its snapshot stats are current,
+  not stale.
