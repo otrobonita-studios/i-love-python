@@ -18,6 +18,10 @@ from loadtest.spec import LoadSpec
 class _OkHandler(BaseHTTPRequestHandler):
     """Tiny 200-OK server for the live simulation test."""
 
+    # HTTP/1.1 + Content-Length (sent in do_GET) = keep-alive, matching real
+    # servers (uvicorn) and the simulator's per-VU persistent connections.
+    protocol_version = "HTTP/1.1"
+
     def do_GET(self) -> None:  # fixed method name required by http.server
         body = b'{"ok": true}'
         self.send_response(200)

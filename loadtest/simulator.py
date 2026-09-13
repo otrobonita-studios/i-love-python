@@ -3,22 +3,24 @@
 Two flavors, both honest about their source:
 
 - http_simulate(): real virtual users (threads) hammering the real endpoint
-  with real HTTP requests, emitting k6-format NDJSON. Used when k6 is not
-  installed - it is a genuine load test, just driven by Python.
+  with real HTTP requests, emitting k6-format NDJSON. Each VU keeps one
+  connection alive across its iterations (k6's per-VU keep-alive), so the
+  load is faithful and the client does not exhaust ephemeral ports.
+  Used when k6 is not installed - a genuine load test, just driven by Python.
 - offline_fixture(): a deterministic, network-free NDJSON stream, used for
   tests and for the "offline" demo mode. Labelled as a fixture, always.
 """
 
 from __future__ import annotations
 
+import http.client
 import json
 import math
 import random
 import threading
 import time
-import urllib.error
-import urllib.request
 from datetime import UTC, datetime
+from urllib.parse import urlsplit
 
 from loadtest.spec import LoadSpec
 
@@ -30,19 +32,38 @@ def _iso(ts: float) -> str:
     return datetime.fromtimestamp(ts, UTC).isoformat()
 
 
+def _split_url(url: str) -> tuple[str, int, str, str]:
+    """(host, port, path, scheme) of the target URL."""
+    parts = urlsplit(url)
+    host = parts.hostname or "127.0.0.1"
+    port = parts.port or (443 if parts.scheme == "https" else 80)
+    return host, port, parts.path or "/", parts.scheme
+
+
+def _connect(host: str, port: int, scheme: str) -> http.client.HTTPConnection:
+    if scheme == "https":
+        return http.client.HTTPSConnection(host, port, timeout=REQUEST_TIMEOUT_S)
+    return http.client.HTTPConnection(host, port, timeout=REQUEST_TIMEOUT_S)
+
+
+def _one_request(conn: http.client.HTTPConnection, path: str) -> tuple[int, str]:
+    """One GET over an existing connection. (status, error); 0 = no response."""
+    conn.request("GET", path, headers={"User-Agent": USER_AGENT})
+    resp = conn.getresponse()
+    resp.read()  # drain fully so the connection stays reusable (keep-alive)
+    return resp.status, ""
+
+
 def _get(url: str) -> tuple[int, str]:
-    """One real HTTP GET. Returns (status, error); status 0 means no response."""
+    """One real HTTP GET on a fresh connection. (status, error); 0 = no response."""
+    host, port, path, scheme = _split_url(url)
+    conn = _connect(host, port, scheme)
     try:
-        # The target URL is the whole point of this module.
-        req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-        # nosec B310 - http(s) URLs are exactly what a load test targets
-        with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT_S) as resp:  # nosec B310
-            resp.read(2048)
-            return resp.status, ""
-    except urllib.error.HTTPError as exc:
-        return exc.code, "http error"
+        return _one_request(conn, path)
     except Exception as exc:  # any network failure is a valid sample
         return 0, type(exc).__name__
+    finally:
+        conn.close()
 
 
 def _phases(spec: LoadSpec) -> list[tuple[int, float]]:
@@ -76,9 +97,19 @@ def http_simulate(spec: LoadSpec) -> str:
             lines.append(json.dumps(payload))
 
     def worker(stop: threading.Event) -> None:
+        # One persistent connection per VU: k6 keeps its connections alive per
+        # virtual user, and a no-keep-alive client both distorts the load and
+        # exhausts the client's ephemeral ports under a hot loop (observed:
+        # 65-99% client-side URLErrors against a healthy server).
+        host, port, path, scheme = _split_url(spec.target_url)
+        conn = _connect(host, port, scheme)
         while not stop.is_set():
             start = time.perf_counter()
-            status, err = _get(spec.target_url)
+            try:
+                status, err = _one_request(conn, path)
+            except Exception as exc:
+                status, err = 0, type(exc).__name__
+                conn = _connect(host, port, scheme)  # reconnect, as k6 would
             ms = (time.perf_counter() - start) * 1000.0
             now = time.time()
             with lock:
