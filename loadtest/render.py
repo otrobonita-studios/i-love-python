@@ -119,7 +119,7 @@ def build_loadtest_tab() -> None:
             node_ok, node_detail = _node_check(js)
             code_box.clear()
             with code_box, ui.card().classes("w-full p-3 gap-2 bg-gray-900"):
-                ui.label("generated/k6/load_test.js  (compiled by Python - do not edit)").classes(
+                ui.label("generated/k6/load.js  (compiled by Python - do not edit)").classes(
                     "text-xs text-gray-400"
                 )
                 ui.code(js, language="javascript").classes("w-full text-xs max-h-80 overflow-auto")

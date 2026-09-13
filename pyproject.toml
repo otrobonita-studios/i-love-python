@@ -17,6 +17,7 @@ dev = [
     "pip-audit",
     "mutmut",
     "coverage",
+    "types-PyYAML",
 ]
 
 [tool.ruff]
@@ -25,6 +26,11 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "C4", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+# The HTML/CSS/SVG this module emits is embedded template text, not Python
+# prose -- wrapping it at 100 columns would fight the markup, not clarify it.
+"scripts/wiring_diagram.py" = ["E501"]
 
 [tool.mypy]
 strict = true
@@ -41,13 +47,17 @@ markers = ["slow: slow tests (deselect with -m 'not slow')"]
 
 [tool.coverage.run]
 source = ["art", "panel", "review", "git_discipline", "explain", "loadtest", "scripts"]
-omit = ["app.py", "*/render.py", "scripts/ci_yaml.py", "scripts/install_hooks.py"]
+omit = [
+    "app.py",
+    "*/render.py",
+    "scripts/ci_yaml.py",
+    "scripts/install_hooks.py",
+    "scripts/wiring_diagram.py",
+]
 
 [tool.coverage.report]
 show_missing = true
+fail_under = 70
 
 [tool.bandit]
 exclude_dirs = [".venv", "tests", "generated"]
-
-[tool.pytest-cov]
-fail_under = 70
