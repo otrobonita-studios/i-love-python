@@ -1,5 +1,64 @@
 # AGENTS.md — rules for any agent working in this repo
 
+## Architecture
+
+The shape of the system, so you don't have to reverse-engineer it from
+code. This prose is the source of truth; the wiring diagram is a snapshot
+of it.
+
+**Layering** — every request flows down this stack, and no layer reaches
+around the one below it:
+
+```text
+browser
+  └─► app.py                  routes + /api endpoints, no logic
+        └─► <mode>/render.py  thin views: no parsing, no math, no I/O
+              └─► logic modules   pure Python, headless-testable
+                    └─► real tools  subprocess · git · HTTP · k6 (CI)
+```
+
+| Mode | Logic | Data flow |
+|---|---|---|
+| Landing | `art/heart.py` | the exact parametric heart curve (spec §1), serialized to SVG server-side; used in the header, the `/api/heart/*` endpoints, and the diagram |
+| Quality | `panel/telemetry.py` | shells out to seven real tools in parallel, parses their actual output, renders each check with its real exit code; snapshot to `generated/telemetry/report.json` (gitignored) |
+| Review | `review/store.py` → `review/personas.py` | `git log --patch` → per-commit diffs → three deterministic heuristics → verdicts + consensus; raw diff one click away |
+| Explain | `explain/translator.py` | per-hunk plain-English "what changed / why it matters / risk" from real commit diffs |
+| Git discipline | `git_discipline/console.py` + `timeline.py` | live ask-git session — `log -S` → `show` → `blame`, each command resolved from prior output; this repo's real history vs a synthetic bad one |
+| Load test | `loadtest/{spec,generate,simulator,report}.py` | validated `LoadSpec` → compiled k6 JS → VU traffic against the running app (deterministic offline fixture without one) → k6-dialect NDJSON → p95 / error rate / VU series |
+
+**Generation loop** — the only non-Python files in the repo are outputs of
+Python generators, and every one is GENERATED-headed:
+
+```text
+Python generators ──► generated/ · .git/hooks/pre-commit · .github/workflows/ci.yml
+  scripts/ci_yaml.py · scripts/install_hooks.py · loadtest/generate.py ·
+  scripts/wiring_diagram.py
+  (scripts/lang_audit.py gates the invariant in CI and pre-commit)
+```
+
+**The contribution pattern** — every feature in this repo follows the same
+shape, and new ones should too:
+
+1. **Logic first.** Plain Python module, no NiceGUI imports, testable without
+   a browser, the app, or the network.
+2. **Tests with it.** Unit (and property-based where invariants exist); the
+   70%+ coverage floor must stay green.
+3. **Thin render.** A `render.py` (or a section of an existing tab) that only
+   calls logic and lays out results.
+4. **Honest I/O.** If the feature talks to the outside world, it talks to
+   real tools — and the UI shows their real output. No fakes, no silent
+   fallbacks (see §2).
+5. **Generated output, generator first.** Any non-Python artifact: write the
+   Python generator, give the output a GENERATED header, register it in
+   `MANIFEST.md`.
+6. **Keep the map honest.** Add the `MANIFEST.md` row, regenerate the
+   diagram (`python -m scripts.wiring_diagram`), and update the mode table
+   in this Architecture section if you added or changed a mode's data flow.
+
+**Pointers.** Visual wiring: `generated/docs/wiring-diagram.html` (snapshot).
+Requirements + open gaps: `docs/spec.md`. Requirement → file → check:
+`MANIFEST.md`.
+
 ## 1. Pure-Python rule (non-negotiable)
 
 Hand-authored source files must be `.py`. Non-Python source may exist **only** if:
