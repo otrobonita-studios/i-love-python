@@ -8,6 +8,7 @@ __pycache__/
 coverage.xml
 htmlcov/
 .pytest_cache/
+.pytest-tmp/
 .mypy_cache/
 .ruff_cache/
 # Generated artifacts (CI YAML, hook, k6 JS) are checked in ON PURPOSE: they

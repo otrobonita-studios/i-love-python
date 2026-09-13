@@ -28,7 +28,7 @@ echo "  - ruff check"
 echo "  - mypy --strict"
 "$PY" -m mypy app.py art panel review git_discipline explain loadtest scripts || exit 1
 echo "  - pytest"
-"$PY" -m pytest -q -m "not slow" || exit 1
+"$PY" -m pytest -q -m "not slow" --basetemp=.pytest-tmp || exit 1
 
 if [ "$status" -eq 0 ]; then
   echo "pre-commit: all fast checks passed"

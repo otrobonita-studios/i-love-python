@@ -78,7 +78,10 @@ STEPS: list[tuple[str, str, list[str]]] = [
             "scripts",
         ],
     ),
-    ("pytest", "pytest", ["-q", "-m", "not slow"]),
+    # --basetemp keeps pytest's temp dirs in the repo: on Windows the user
+    # temp dir can be locked (antivirus, other sessions) and pytest's end-of-
+    # session cleanup then crashes the whole hook.
+    ("pytest", "pytest", ["-q", "-m", "not slow", "--basetemp=.pytest-tmp"]),
 ]
 
 
