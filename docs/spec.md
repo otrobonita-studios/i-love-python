@@ -8,7 +8,11 @@
 > mutmut survival score on the quality panel, the landing caption and draw
 > animation, the code/explain toggle, `black --check`, and the
 > heatmap/radar/trend visualisations. The §1 trademark question remains an
-> owner decision, not a build task.
+> owner decision, not a build task. Design update (owner, 2026-09-13): the
+landing mark is the I❤PY wordmark — glyph paths are owned by `art/logo.py`
+and the SVG is generated at runtime; the C2PA content-credentials manifest
+carried by the reference export is not part of the output. The parametric
+heart remains the curve module with its tests.
 
 **Repo:** `i-love-python` (standalone, public-facing demo)
 **Author / studio:** Otrobonita AI Labs — Jesper Karlsson

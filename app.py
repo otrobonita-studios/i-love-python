@@ -29,11 +29,9 @@ panel_render.register_api()
 
 @ui.page("/")
 def index() -> None:
-    with ui.header().classes("items-center justify-between bg-white border-b px-6"):
-        with ui.row().classes("items-center gap-3"):
-            ui.label("I \u2665 PY").classes("text-2xl font-black tracking-tight")
-            ui.label("a Python app that proves its own quality").classes("text-xs text-gray-400")
-        art_render.render_heart(max_width="w-14")
+    with ui.header().classes("items-center justify-between gap-3 bg-white border-b px-6"):
+        art_render.render_logo(size="h-10 w-10")
+        ui.label("a Python app that proves its own quality").classes("text-xs text-gray-400")
 
     with ui.tabs().classes("w-full") as tabs:
         quality_tab = ui.tab("Quality", icon="monitoring")
