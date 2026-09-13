@@ -9,6 +9,7 @@
 - [MANIFEST.md](./MANIFEST.md): application-level intent, per the Otrobonita playbook convention
 - [AGENTS.md](./AGENTS.md): standing instructions for coding agents — pure-Python constraint, commit discipline, architecture
 - [README.md](./README.md): human-facing overview, quickstart, reusable parts
+- [generated/docs/wiring-diagram.html](./generated/docs/wiring-diagram.html): the five tabs wired to their real tools — generated HTML, open in a browser
 
 ## Run it
 ```bash
