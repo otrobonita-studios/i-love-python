@@ -3,6 +3,9 @@ name = "i-love-python"
 version = "0.1.0"
 description = "A demo that proves it loves Python: live telemetry, review personas, git discipline, load testing — all in pure Python."
 requires-python = ">=3.12"
+license = "Apache-2.0"
+authors = [{ name = "Jesper Karlsson" }]
+urls = { repository = "https://github.com/otrobonita-studios/i-love-python" }
 dependencies = ["nicegui>=1.4.30"]
 
 [project.optional-dependencies]
