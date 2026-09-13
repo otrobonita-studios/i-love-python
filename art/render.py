@@ -13,5 +13,5 @@ def render_heart(max_width: str = "max-w-64") -> None:
 
 
 def heart_svg() -> str:
-    """Return the raw SVG string (used by the API and tests)."""
+    """Return the raw SVG string (used by the UI and tests)."""
     return to_svg(heart_points(HEART_POINTS))
