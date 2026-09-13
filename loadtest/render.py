@@ -37,6 +37,45 @@ def _node_check(js: str) -> tuple[bool, str]:
         return proc.returncode == 0, detail
 
 
+def _render_artifact(
+    js: str,
+    problems: list[str],
+    node_ok: bool,
+    node_detail: str,
+    target: ui.column,
+) -> None:
+    """Show the compiled script as a compact artifact, not a page-filling dump."""
+    target.clear()
+    preview = "\n".join(js.splitlines()[:2])
+    with (
+        target,
+        ui.column().classes("w-full gap-2 rounded border border-gray-200 bg-gray-50 p-3"),
+    ):
+        with ui.row().classes("items-center gap-2 flex-wrap w-full"):
+            ui.label("generated/k6/load.js").classes("font-mono text-xs font-semibold")
+            ui.label("compiled by Python · do not edit").classes("text-[10px] text-gray-400")
+            if problems:
+                ui.label("structural fail").classes(
+                    "text-[10px] uppercase tracking-wide rounded px-1.5 py-0.5 "
+                    "bg-red-50 text-red-800"
+                )
+            else:
+                ui.label("structural OK").classes(
+                    "text-[10px] uppercase tracking-wide rounded px-1.5 py-0.5 "
+                    "bg-green-50 text-green-800"
+                )
+            node_style = "bg-green-50 text-green-800" if node_ok else "bg-amber-50 text-amber-800"
+            ui.label(f"node --check: {node_detail}").classes(
+                f"text-[10px] rounded px-1.5 py-0.5 {node_style}"
+            )
+        ui.label(preview).classes("font-mono text-[11px] text-gray-600 whitespace-pre-wrap")
+        if problems:
+            for problem in problems:
+                ui.label(problem).classes("text-xs text-red-700")
+        with ui.expansion("full compiled script").classes("w-full"):
+            ui.code(js, language="javascript").classes("w-full text-xs max-h-64 overflow-auto")
+
+
 def _render_stats(result: report.LoadReport, target: ui.column) -> None:
     target.clear()
     with target:
@@ -54,7 +93,12 @@ def _render_stats(result: report.LoadReport, target: ui.column) -> None:
                     ui.label(value).classes("text-lg font-bold")
         with ui.row().classes("items-center gap-2"):
             ui.icon("science").classes("text-sm text-gray-400")
-            ui.label(f"source: {result.source}").classes("text-xs text-gray-500")
+            source_note = {
+                "python simulator": "real HTTP from this process against this server",
+                "offline fixture": "deterministic, no network — not a live run",
+                "k6": "the k6 binary hitting this server",
+            }.get(result.source, "labelled so the origin is never implied")
+            ui.label(f"source: {result.source} — {source_note}").classes("text-xs text-gray-500")
         if result.series:
             points = list(result.series)
             ui.echart(
@@ -83,9 +127,14 @@ def build_loadtest_tab() -> None:
             ui.icon("speed").classes("text-2xl")
             ui.label("Load test").classes("text-lg font-bold")
         ui.label(
-            "One Python dataclass is the source of truth. The k6 JavaScript is compiled from it, "
-            "validated, and the run is executed for real - from Python, against this server."
-        ).classes("text-xs text-gray-500")
+            "A Python dataclass is the source of truth. Python compiles it to k6 JavaScript "
+            "(a generated artifact — do not edit the JS). Then either hit this server for "
+            "real, or play a labelled offline fixture. The chart always names its source."
+        ).classes("text-sm text-gray-600 leading-relaxed")
+        ui.label(
+            "Defaults are small on purpose: a handful of virtual users against /api/health, "
+            "a few seconds. This is a demo of the loop, not a soak test."
+        ).classes("text-sm text-gray-600 leading-relaxed")
 
         with ui.grid(columns=6).classes("w-full gap-2 items-end"):
             vus = ui.number("VUs", value=4, min=1, max=64).props("dense outlined")
@@ -109,35 +158,13 @@ def build_loadtest_tab() -> None:
 
         with ui.column().classes("w-full gap-2") as code_box:
             pass
-        with ui.column().classes("w-full gap-1") as note:
-            pass
 
         def compile_script() -> None:
             spec = make_spec()
             js = generate.compile_js(spec)
             problems = generate.validate_structure(js, spec)
             node_ok, node_detail = _node_check(js)
-            code_box.clear()
-            with code_box, ui.card().classes("w-full p-3 gap-2 bg-gray-900"):
-                ui.label("generated/k6/load.js  (compiled by Python - do not edit)").classes(
-                    "text-xs text-gray-400"
-                )
-                ui.code(js, language="javascript").classes("w-full text-xs max-h-80 overflow-auto")
-            note.clear()
-            with note:
-                if problems:
-                    for problem in problems:
-                        ui.label(f"validation: {problem}").classes("text-xs text-red-300")
-                else:
-                    ui.label("structural validation: passed").classes("text-xs text-green-300")
-                if node_ok:
-                    ui.label(f"node --check: {node_detail}").classes("text-xs text-green-300")
-                else:
-                    ui.label(f"node --check: {node_detail}").classes("text-xs text-amber-300")
-
-        ui.button("Compile k6 script from spec", on_click=compile_script, icon="build").props(
-            "outline dense"
-        )
+            _render_artifact(js, problems, node_ok, node_detail, code_box)
 
         with ui.column().classes("w-full gap-3") as results:
             pass
@@ -164,7 +191,10 @@ def build_loadtest_tab() -> None:
             ndjson, _ = simulator.offline_fixture(seed=7)
             _render_stats(report.parse_ndjson(ndjson, source="offline fixture"), results)
 
-        with ui.row().classes("gap-2"):
+        with ui.row().classes("gap-2 flex-wrap"):
+            ui.button("Compile k6 script from spec", on_click=compile_script, icon="build").props(
+                "outline dense"
+            )
             ui.button("Run live load test", on_click=run_live, icon="rocket_launch").props("dense")
             ui.button(
                 "Run offline fixture (deterministic)", on_click=run_fixture, icon="science"
