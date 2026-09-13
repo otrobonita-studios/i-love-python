@@ -22,28 +22,34 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install nicegui hypothesis pytest pytest-cov coverage ruff mypy radon bandit pip-audit
       - name: ruff format --check
-        run: >-
+        run: |
           python -m ruff format --check app.py art panel review git_discipline explain loadtest scripts tests
       - name: ruff lint
-        run: >-
+        run: |
           python -m ruff check app.py art panel review git_discipline explain loadtest scripts tests
       - name: mypy --strict
-        run: >-
+        run: |
           python -m mypy app.py art panel review git_discipline explain loadtest scripts
       - name: pytest with coverage
-        run: >-
+        run: |
           python -m pytest -q --cov --cov-report=xml --cov-report=term
-      - name: radon complexity (max rank B)
-        run: >-
-          python -m radon cc art panel review git_discipline explain loadtest scripts -s -n B
+      - name: radon complexity (no D/E)
+        run: |
+          out=$(python -m radon cc art panel review git_discipline explain loadtest scripts -s -n D)
+          if [ -n "$out" ]; then
+            echo "Functions at D/E complexity (forbidden by repo rules):"
+            echo "$out"
+            exit 1
+          fi
+          echo "No D/E complexity functions."
       - name: bandit security scan
-        run: >-
+        run: |
           python -m bandit -r art panel review git_discipline explain loadtest scripts
       - name: pip-audit dependency scan
-        run: >-
+        run: |
           python -m pip_audit
       - name: pure-Python language audit
-        run: >-
+        run: |
           python -m scripts.lang_audit
       - name: upload coverage
         if: always()

@@ -22,11 +22,13 @@ GENERATED_HEADER = (
 )
 
 K6_VERSION = "v0.55.0"
+LIVE_WORKFLOW = ROOT / ".github" / "workflows" / "ci.yml"
 
 # Command fragments kept short so the template lines fit the 100-char limit.
 TARGETS = "app.py art panel review git_discipline explain loadtest scripts tests"
 PACKAGES = "nicegui hypothesis pytest pytest-cov coverage ruff mypy radon bandit pip-audit"
 INSTALL_CMD = f"python -m pip install {PACKAGES}"
+RADON_PKGS = "art panel review git_discipline explain loadtest scripts"
 # CI installs k6 into /tmp; this is command text, not a local tempfile. nosec B108
 K6_BIN = f"/tmp/k6-{K6_VERSION}-linux-amd64/k6"  # nosec B108
 K6_TARBALL = (
@@ -45,8 +47,18 @@ QUALITY_STEPS: list[tuple[str, str]] = [
     ),
     ("pytest with coverage", "python -m pytest -q --cov --cov-report=xml --cov-report=term"),
     (
-        "radon complexity (max rank B)",
-        "python -m radon cc art panel review git_discipline explain loadtest scripts -s -n B",
+        "radon complexity (no D/E)",
+        "\n".join(
+            [
+                f"out=$(python -m radon cc {RADON_PKGS} -s -n D)",
+                'if [ -n "$out" ]; then',
+                '  echo "Functions at D/E complexity (forbidden by repo rules):"',
+                '  echo "$out"',
+                "  exit 1",
+                "fi",
+                'echo "No D/E complexity functions."',
+            ]
+        ),
     ),
     (
         "bandit security scan",
@@ -57,11 +69,15 @@ QUALITY_STEPS: list[tuple[str, str]] = [
 ]
 
 
+def _quality_step(name: str, run: str) -> str:
+    """One workflow step; `|` so multi-line gate commands keep their newlines."""
+    body = "\n".join("          " + line for line in run.splitlines())
+    return f"      - name: {name}\n        run: |\n{body}"
+
+
 def build_yaml() -> str:
     """Assemble the full workflow file as text."""
-    quality = "\n".join(
-        f"      - name: {name}\n        run: >-\n          {run}" for name, run in QUALITY_STEPS
-    )
+    quality = "\n".join(_quality_step(name, run) for name, run in QUALITY_STEPS)
     return f"""{GENERATED_HEADER}
 # Pipeline for i-love-python (Otrobonita AI Labs).
 name: ci
@@ -126,14 +142,20 @@ jobs:
 """
 
 
-def write_yaml() -> Path:
-    """Write generated/ci/ci-pipeline.yml and validate it parses as YAML."""
+def write_yaml() -> tuple[Path, Path]:
+    """Write the generated YAML and install the live .github/workflows copy.
+
+    Same pattern as install_hooks.py: the tracked artifact and the live copy
+    are both written here, so regenerating can never let them drift.
+    """
     GENERATED_DIR.mkdir(parents=True, exist_ok=True)
     text = build_yaml()
     out = GENERATED_DIR / "ci-pipeline.yml"
     out.write_text(text, encoding="utf-8")
+    LIVE_WORKFLOW.parent.mkdir(parents=True, exist_ok=True)
+    LIVE_WORKFLOW.write_text(text, encoding="utf-8")
     _validate(text)
-    return out
+    return out, LIVE_WORKFLOW
 
 
 def _check(condition: bool, message: str) -> None:
@@ -156,9 +178,10 @@ def _validate(text: str) -> None:
 
 
 def main() -> int:
-    out = write_yaml()
+    out, live = write_yaml()
     lines = len(out.read_text(encoding="utf-8").splitlines())
     print(f"generated {out.relative_to(ROOT)} ({lines} lines)")
+    print(f"installed live workflow: {live.relative_to(ROOT)}")
     return 0
 
 

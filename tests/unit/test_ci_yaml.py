@@ -40,6 +40,24 @@ def test_quality_job_covers_the_full_local_stack() -> None:
         assert expected in steps, f"missing step: {expected}"
 
 
+def test_radon_step_is_a_real_gate_not_a_display() -> None:
+    import yaml
+
+    doc = yaml.safe_load(ci_yaml.build_yaml())
+    steps = {s.get("name", ""): s.get("run", "") for s in doc["jobs"]["quality"]["steps"]}
+    radon = steps["radon complexity (no D/E)"]
+    assert "-n D" in radon  # report functions at D or above
+    assert "exit 1" in radon  # and fail the job if any exist
+
+
+def test_live_workflow_matches_the_generated_one() -> None:
+    """Drift gate: the live .github/workflows/ci.yml must equal the generator output."""
+    import scripts.ci_yaml as mod
+
+    live = mod.ROOT / ".github" / "workflows" / "ci.yml"
+    assert live.read_text(encoding="utf-8") == mod.build_yaml()
+
+
 def test_load_test_job_boots_app_and_runs_k6() -> None:
     import yaml
 
