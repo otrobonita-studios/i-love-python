@@ -53,6 +53,9 @@ def _render_review(review: personas.Review, diff: str, content: ui.column) -> No
                     ui.icon("minimize").classes("text-sm text-gray-400 mt-0.5")
                     ui.label(bullet).classes("text-xs")
 
+        with ui.expansion("Raw diff - what the panel actually reviewed").classes("w-full"):
+            ui.code(diff, language="diff").classes("text-xs max-h-96")
+
 
 def build_review() -> None:
     commits = store.list_commits()
