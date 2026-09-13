@@ -1,5 +1,15 @@
 # I ❤️ PY — Extended Specification
 
+> **Status — requirements record for v0.1.0.** The implementation, `AGENTS.md`,
+> and `MANIFEST.md` are the current source of truth; this document is kept as
+> the spec the build was made from, and its sections are the referent of the
+> `Manifest:` commit trailers. Specified but not shipped in 0.1.0 (open work,
+> not dropped scope): the `git bisect` step in the ask-git console, the
+> mutmut survival score on the quality panel, the landing caption and draw
+> animation, the code/explain toggle, `black --check`, and the
+> heatmap/radar/trend visualisations. The §1 trademark question remains an
+> owner decision, not a build task.
+
 **Repo:** `i-love-python` (standalone, public-facing demo)
 **Author / studio:** Otrobonita AI Labs — Jesper Karlsson
 **One-line pitch:** A demo app about Python, written *only* in Python, that proves its own production quality instead of asking anyone to trust it.

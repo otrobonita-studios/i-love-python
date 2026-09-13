@@ -3,7 +3,7 @@
 > A demo that proves it loves Python, not just says it.
 > **Otrobonita AI Labs — Jesper Karlsson**
 
-Every requirement in `spec.md` maps to a real file and a real check. Nothing here
+Every requirement in `docs/spec.md` maps to a real file and a real check. Nothing here
 is simulated: the telemetry panel shows actual tool output, the review panel reads
 real git diffs from this repo, and the load test hits this very app.
 
