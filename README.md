@@ -32,7 +32,7 @@ drawn by the same codebase you're about to inspect. Five tabs from there:
 
 | Tab | What it does |
 |---|---|
-| **Quality** | Runs ruff, mypy strict, pytest+coverage, radon, bandit and pip-audit for real, rendering their output live |
+| **Quality** | Runs ruff (format + lint), mypy strict, pytest+coverage, radon, bandit, pip-audit and the pure-Python language audit for real, rendering their output live |
 | **Review** | Purist / Skeptic / Pragmatist personas issue rule-based verdicts over actual `git diff` output |
 | **Git discipline** | An "ask git" console — log, show, blame — against this repo's own history (bisect is a documented gap, not a feature) |
 | **Explain** | Plain-language translation of any diff or tool output, alongside the raw version |
@@ -79,9 +79,11 @@ This is an experimental project, but several pieces are portable on their own:
 - [MANIFEST.md](./MANIFEST.md) — application-level intent, per the Otrobonita playbook convention
 - [AGENTS.md](./AGENTS.md) — standing instructions for coding agents: git discipline, the pure-Python constraint, architecture
 - [llms.txt](./llms.txt) — navigation map for agents reading this repo
+- [wiring map](./generated/docs/wiring-diagram.html) — the five tabs wired to their real tools, as generated HTML (open in a browser)
 
 Related: the engineering playbook this repo demonstrates lives at [playbook.otrobonita.com](https://playbook.otrobonita.com).
 
 ## Status
 
-Experimental. Version 0.1.0 — see `docs/spec.md` for what's shipped and what's open. 
+Experimental. Version 0.1.0 — see `docs/spec.md` for what's shipped and what's open.
+Apache 2.0 licensed (see `LICENSE`); made by Jesper Karlsson with another, much larger AI. 
