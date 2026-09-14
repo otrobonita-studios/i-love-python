@@ -36,6 +36,8 @@ select = ["E", "F", "I", "UP", "B", "SIM", "C4", "RUF"]
 "scripts/wiring_diagram.py" = ["E501"]
 # Same reason: this module emits CSS custom properties and Quasar overrides.
 "art/theme.py" = ["E501"]
+# Canonical letter copy must stay one string per paragraph (docs/spec-love.md §2.2).
+"explain/letter.py" = ["E501"]
 
 [tool.mypy]
 strict = true
