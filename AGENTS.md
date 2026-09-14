@@ -27,12 +27,14 @@ browser
 | Load test | `loadtest/{spec,generate,simulator,report}.py` | validated `LoadSpec` → compiled k6 JS → VU traffic against the running app (deterministic offline fixture without one) → k6-dialect NDJSON → p95 / error rate / VU series |
 
 **Generation loop** — the only non-Python files in the repo are outputs of
-Python generators, and every one is GENERATED-headed:
+Python generators. Text artifacts carry a `GENERATED` header. The favicon
+ICO is binary so it cannot; it lives under `generated/` (lang_audit skip)
+and is still owned by `art/favicon.py`.
 
 ```text
 Python generators ──► generated/ · .git/hooks/pre-commit · .github/workflows/ci.yml
   scripts/ci_yaml.py · scripts/install_hooks.py · loadtest/generate.py ·
-  scripts/wiring_diagram.py
+  scripts/wiring_diagram.py · art/favicon.py
   (scripts/lang_audit.py gates the invariant in CI and pre-commit)
 ```
 

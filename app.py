@@ -8,6 +8,7 @@ executed for real. Nothing is simulated; where something cannot run
 
 from nicegui import app, ui
 
+from art import favicon as art_favicon
 from art import links as art_links
 from art import render as art_render
 from explain import render as explain_render
@@ -110,4 +111,5 @@ ui.run(
     reload=False,
     show=False,
     uvicorn_logging_level="warning",
+    favicon=art_favicon.FAVICON_PATH,
 )
