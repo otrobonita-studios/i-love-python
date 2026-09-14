@@ -42,7 +42,7 @@ def test_typeset_does_not_markdown_dunder_init() -> None:
     stripped = html.replace("__init__.py", "")
     assert "_init_" not in stripped
     closing = letter.typeset_html(letter.CLOSING, link_tools=True)
-    assert "tool-ruff-format" in closing
+    assert "/quality#tool-ruff-format" in closing
 
 
 def test_zen_is_decoded_from_cpython_this() -> None:

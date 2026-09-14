@@ -43,7 +43,7 @@ def build_intro() -> None:
     """House letter of introduction above the room cards. Canonical copy."""
     from explain import intro
 
-    with ui.element("section").classes("ilp-letter w-full").props("id=map"):
+    with ui.element("section").classes("ilp-letter w-full"):
         ui.label(intro.KICKER).classes("ilp-letter-kicker")
         ui.label(intro.TITLE).classes("ilp-letter-title")
         for paragraph in intro.PARAGRAPHS:
@@ -62,7 +62,7 @@ def build_intro() -> None:
 
 def build_letter() -> None:
     """Typeset the love letter and the import-this control. No paraphrasing."""
-    with ui.element("section").classes("ilp-letter w-full").props("id=letter"):
+    with ui.element("section").classes("ilp-letter w-full"):
         ui.label(letter.KICKER).classes("ilp-letter-kicker")
         ui.label(letter.TITLE).classes("ilp-letter-title")
         for paragraph in letter.PARAGRAPHS:

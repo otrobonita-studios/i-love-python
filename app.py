@@ -29,25 +29,75 @@ panel_render.register_api()
 art_render.register_routes()
 
 
-@ui.page("/")
-def index() -> None:
+def chrome() -> None:
+    """Shared shell: theme + top menu. Each view is its own route."""
     art_render.apply_theme()
     art_render.render_nav()
+
+
+@ui.page("/")
+def index() -> None:
+    chrome()
     art_render.render_hero()
+
+
+@ui.page("/letter")
+def letter_page() -> None:
+    chrome()
     explain_render.build_letter()
+
+
+@ui.page("/curve")
+def curve_page() -> None:
+    chrome()
     art_render.render_curve_section()
-    with ui.element("section").classes("ilp-section").props("id=quality"):
+
+
+@ui.page("/quality")
+def quality_page() -> None:
+    chrome()
+    with ui.element("section").classes("ilp-section"):
         panel_render.build_panel()
-    with ui.element("section").classes("ilp-section").props("id=explain"):
+
+
+@ui.page("/explain")
+def explain_page() -> None:
+    chrome()
+    with ui.element("section").classes("ilp-section"):
         explain_render.build_explain_tab()
+
+
+@ui.page("/map")
+def house_page() -> None:
+    chrome()
     explain_render.build_intro()
-    with ui.element("section").classes("ilp-section").props("id=review"):
+
+
+@ui.page("/review")
+def review_page() -> None:
+    chrome()
+    with ui.element("section").classes("ilp-section"):
         review_render.build_review()
-    with ui.element("section").classes("ilp-section").props("id=git"):
+
+
+@ui.page("/git")
+def git_page() -> None:
+    chrome()
+    with ui.element("section").classes("ilp-section"):
         git_render.build_git_tab()
-    with ui.element("section").classes("ilp-section").props("id=load"):
+
+
+@ui.page("/load")
+def load_page() -> None:
+    chrome()
+    with ui.element("section").classes("ilp-section"):
         loadtest_render.build_loadtest_tab()
-    with ui.element("section").classes("ilp-letter").props("id=listen"):
+
+
+@ui.page("/listen")
+def listen_page() -> None:
+    chrome()
+    with ui.element("section").classes("ilp-letter"):
         ui.label("Listen").classes("ilp-letter-title")
         ui.link("Podcast", art_links.PODCAST_HREF, new_tab=True).classes("ilp-nav-item").props(
             "rel=noopener noreferrer"

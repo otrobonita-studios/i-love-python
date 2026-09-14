@@ -56,7 +56,7 @@ def render_nav() -> None:
     """Sticky bar: centered max-w-6xl, mark left, sections + GitHub right."""
     with ui.element("header").classes("ilp-nav"):  # noqa: SIM117 — inner bar must nest
         with ui.element("div").classes("ilp-nav-inner"):
-            with ui.link("", "#hero").classes("ilp-nav-mark"):
+            with ui.link("", "/").classes("ilp-nav-mark"):
                 ui.html(art_logo.nav_mark_svg())
                 ui.label("Back to top").classes("ilp-sr-only")
             links = ui.element("nav").classes("ilp-nav-links")
@@ -134,13 +134,13 @@ def render_hero() -> None:
             ui.label(hero_copy.FORMULA_LABEL)
             ui.label(hero_copy.FORMULA)
         formula.on("click", dialog.open)
-        ui.link(hero_copy.READ_LETTER, "#letter").classes("ilp-btn-ink")
+        ui.link(hero_copy.READ_LETTER, "/letter").classes("ilp-btn-ink")
         ui.label(hero_copy.CLICK_HEART).classes("ilp-click-hint")
 
 
 def render_curve_section() -> None:
-    """#curve — essay + the same lab. Nav Curve still works."""
-    with ui.element("section").classes("ilp-letter").props("id=curve"):
+    """Curve page: essay + the same lab."""
+    with ui.element("section").classes("ilp-letter"):
         ui.label(curve_copy.TITLE).classes("ilp-letter-title")
         ui.label(curve_copy.FORMULA).classes("ilp-mono")
         render_curve_essay()

@@ -34,15 +34,15 @@ def wiring_diagram_file() -> Path:
 
 
 NAV_ITEMS: tuple[tuple[str, str], ...] = (
-    ("Letter", "#letter"),
-    ("Curve", "#curve"),
-    ("Quality", "#quality"),
-    ("Explain", "#explain"),
-    ("House", "#map"),
-    ("Review", "#review"),
-    ("Git", "#git"),
-    ("Load", "#load"),
-    ("Listen", "#listen"),
+    ("Letter", "/letter"),
+    ("Curve", "/curve"),
+    ("Quality", "/quality"),
+    ("Explain", "/explain"),
+    ("House", "/map"),
+    ("Review", "/review"),
+    ("Git", "/git"),
+    ("Load", "/load"),
+    ("Listen", "/listen"),
 )
 
 

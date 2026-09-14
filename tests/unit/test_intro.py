@@ -9,6 +9,8 @@ def test_intro_copy_is_the_house_letter() -> None:
     assert intro.TITLE == "I would like you to meet the house."
     assert intro.SIGN_OFF[-1] == "Otrobonita AI Labs"
     assert len(intro.ROOMS) == 6
+    assert intro.ROOMS[0].href == "/"
+    assert all(room.href.startswith("/") for room in intro.ROOMS)
     html = intro.typeset_html(intro.PARAGRAPHS[2])
     assert "app.py" in html
     assert "<code" in html

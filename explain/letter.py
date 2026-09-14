@@ -49,7 +49,7 @@ def typeset_html(text: str, *, link_tools: bool = False) -> str:
     ]
     if link_tools:
         for mention, tool_name in glossary.MENTION_TO_TOOL.items():
-            href = f"#{glossary.tool_anchor(tool_name)}"
+            href = f"/quality#{glossary.tool_anchor(tool_name)}"
             tokens.append((mention, f'<a class="ilp-link" href="{href}">{escape(mention)}</a>'))
     for word in INLINE_CODE:
         tokens.append((word, f'<code class="ilp-code">{escape(word)}</code>'))
