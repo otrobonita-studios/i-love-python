@@ -51,6 +51,7 @@ def test_zen_button_toggles_hide_then_execute() -> None:
     assert zen.EXECUTE_LABEL == "Execute"
     assert zen.HIDE_LABEL == "Hide"
     assert zen.HIDE_LABEL != "Again"
+    assert not hasattr(letter, "ZEN_CAPTION")
 
 
 def test_zen_is_decoded_from_cpython_this() -> None:

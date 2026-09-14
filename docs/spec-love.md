@@ -177,11 +177,6 @@ zen = codecs.decode(this_mod.s, "rot_13")
 Tests: the decoded string starts with `The Zen of Python, by Tim Peters` and
 contains `Readability counts.` and `Namespaces are one honking great idea`.
 
-Caption under the output, after run:
-
-> this.py — the letter that shipped with the language. Rot13 in the source,
-> plain English on the way out.
-
 Idle caption:
 
 > One line. The rest of the philosophy is in the output.

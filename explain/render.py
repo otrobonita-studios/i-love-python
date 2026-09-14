@@ -37,10 +37,11 @@ def _import_this() -> None:
         if shown:
             with output:
                 ui.label(zen_mod.zen_of_python()).classes("ilp-zen-out")
-            caption.set_text(letter.ZEN_CAPTION)
+            caption.set_visibility(False)
             btn.props("icon=visibility_off")
         else:
             caption.set_text(letter.IDLE_CAPTION)
+            caption.set_visibility(True)
             btn.props("icon=play_arrow")
 
     btn.on_click(toggle)

@@ -7,10 +7,6 @@ TITLE = "For the love of the inaccessible"
 NUMPY_HREF = "https://numpy.org/"
 SCIPY_HREF = "https://scipy.org/"
 IDLE_CAPTION = "One line. The rest of the philosophy is in the output."
-ZEN_CAPTION = (
-    "this.py — the letter that shipped with the language. Rot13 in the source, "
-    "plain English on the way out."
-)
 INLINE_CODE = (
     "npm install",
     "package.json",
