@@ -25,9 +25,9 @@ TONE_WORD = {
 def _tone_badge(tone: str) -> None:
     icon, style = TONE_STYLE.get(tone, ("help", "bg-gray-100"))
     with ui.row().classes("items-center gap-1"):
-        ui.icon(icon).classes("text-base")
+        ui.icon(icon, size="1.25rem")
         ui.label(TONE_WORD.get(tone, tone)).classes(
-            f"rounded px-2 py-0.5 text-xs font-bold {style}"
+            f"rounded px-2 py-0.5 text-base font-bold {style}"
         )
 
 
@@ -36,7 +36,7 @@ def _render_review(review: personas.Review, diff: str, content: ui.column) -> No
     with content:
         with ui.row().classes("items-center gap-3 w-full"):
             _tone_badge(review.consensus_tone)
-            ui.label(review.consensus_note).classes("text-sm font-semibold")
+            ui.label(review.consensus_note).classes("text-base font-semibold")
 
         with ui.grid(columns=3).classes("w-full gap-3"):
             for verdict in review.verdicts:
@@ -44,29 +44,44 @@ def _render_review(review: personas.Review, diff: str, content: ui.column) -> No
                     with ui.row().classes("items-center justify-between w-full"):
                         ui.label(verdict.persona).classes("font-bold")
                         _tone_badge(verdict.tone)
-                    ui.label(verdict.note).classes("text-xs text-gray-700")
+                    ui.label(verdict.note).classes("text-base text-gray-700")
 
-        with ui.card().classes("w-full p-3 gap-2"):
-            ui.label("Plain-English explanation of this diff").classes("font-semibold text-sm")
-            for bullet in explain_diff(diff):
-                with ui.row().classes("gap-2 items-start"):
-                    ui.icon("minimize").classes("text-sm text-gray-400 mt-0.5")
-                    ui.label(bullet).classes("text-xs")
+        view = ui.toggle(["Explain", "Code"], value="Explain")
+        body = ui.column().classes("w-full gap-2")
 
-        with ui.expansion("Raw diff - what the panel actually reviewed").classes("w-full"):
-            ui.code(diff, language="diff").classes("text-xs max-h-96")
+        def _paint() -> None:
+            body.clear()
+            with body:
+                if view.value == "Code":
+                    ui.label("Raw diff — what the panel actually reviewed").classes(
+                        "font-semibold text-base"
+                    )
+                    ui.code(diff, language="diff").classes(
+                        "w-full text-base max-h-96 overflow-auto"
+                    )
+                else:
+                    ui.label("Plain-English explanation of this diff").classes(
+                        "font-semibold text-base"
+                    )
+                    for bullet in explain_diff(diff):
+                        with ui.row().classes("gap-2 items-start"):
+                            ui.icon("minimize", size="1.25rem").classes("text-gray-400 mt-0.5")
+                            ui.label(bullet).classes("text-base")
+
+        view.on_value_change(lambda _e: _paint())
+        _paint()
 
 
 def build_review() -> None:
     commits = store.list_commits()
     with ui.card().classes("w-full p-4 gap-3"):
         with ui.row().classes("items-center gap-2"):
-            ui.icon("groups").classes("text-2xl")
+            ui.icon("groups", size="1.5rem")
             ui.label("Review panel").classes("text-lg font-bold")
         ui.label(
-            "Purist, Skeptic and Pragmatist review a real commit from this repo's history. "
-            "Deterministic rules over the actual diff - no AI pretending."
-        ).classes("text-xs text-gray-500")
+            "A real commit from this repo, judged by Purist, Skeptic, and Pragmatist. "
+            "Fixed rules, no LLM. The raw diff is one click away."
+        ).classes("ilp-lede")
 
         with ui.row().classes("items-center gap-2 w-full"):
             options = {commit.sha: f"{commit.sha}  {commit.subject}" for commit in commits}
@@ -81,7 +96,7 @@ def build_review() -> None:
             target.clear()
             with target:
                 ui.spinner(size="md")
-                ui.label("Pulling the real diff and consulting the panel...").classes("text-xs")
+                ui.label("Pulling the real diff and consulting the panel...").classes("text-base")
             diff = store.commit_diff(sha)
             review = personas.review_diff(diff, sha)
             _render_review(review, diff, target)

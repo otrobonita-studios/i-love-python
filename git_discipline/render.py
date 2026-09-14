@@ -45,16 +45,16 @@ def _render_entry(entry: timeline.TimelineEntry, content: ui.column) -> None:
     with ui.row().classes(
         f"items-start gap-2 w-full rounded p-2 {'bg-green-50' if good else 'bg-red-50'}"
     ):
-        ui.icon(icon).classes("text-lg mt-0.5")
+        ui.icon(icon, size="1.25rem").classes("mt-0.5")
         with ui.column().classes("gap-0.5 flex-grow"):
             with ui.row().classes("gap-2 items-center"):
-                ui.label(entry.sha).classes("font-mono text-xs text-gray-500")
-                ui.label(entry.subject).classes("text-sm font-medium")
-                ui.label(entry.date).classes("text-[10px] text-gray-400")
-            ui.label(entry.reason).classes("text-xs text-gray-500")
+                ui.label(entry.sha).classes("font-mono text-base text-gray-500")
+                ui.label(entry.subject).classes("text-base font-medium")
+                ui.label(entry.date).classes("text-base text-gray-400")
+            ui.label(entry.reason).classes("text-base text-gray-500")
             for manifest in entry.manifest:
                 ui.label(f"Manifest: {manifest}").classes(
-                    "text-[10px] font-mono rounded bg-white px-1.5 py-0.5 text-gray-600"
+                    "text-base font-mono rounded bg-white px-1.5 py-0.5 text-gray-600"
                 )
 
 
@@ -62,12 +62,12 @@ def _build_console() -> None:
     session = _Session()
     with ui.card().classes("w-full p-4 gap-3"):
         with ui.row().classes("items-center gap-2"):
-            ui.icon("terminal").classes("text-2xl")
+            ui.icon("terminal", size="1.5rem")
             ui.label("Ask git").classes("text-lg font-bold")
         ui.label(
-            "The heart once rendered with a wrong top - the bug is real in this repo's history. "
-            "Walk through how a developer finds it using nothing but git."
-        ).classes("text-xs text-gray-500")
+            "A guided ask-git walk through a real bug in this history (the missing "
+            "heart-curve term), using real git commands. Bisect is a documented gap."
+        ).classes("ilp-lede")
         with ui.column().classes("w-full gap-2") as transcript:
             pass
         with ui.row().classes("gap-2") as actions:
@@ -77,18 +77,16 @@ def _build_console() -> None:
         if session.finished:
             return
         result = _execute_step(session)
-        with transcript, ui.card().classes("w-full p-3 gap-2 bg-gray-900 text-gray-100"):
-            ui.label(f"you: {result.step.prompt}").classes("text-xs text-gray-300")
-            ui.label(f"$ {result.command}").classes("font-mono text-xs text-sky-300")
-            ui.code(result.output, language="bash").classes(
-                "text-xs max-h-48 overflow-auto bg-black/40 rounded p-2"
-            )
-            ui.label(f"why: {result.step.explanation}").classes("text-[11px] text-gray-400")
+        with transcript, ui.column().classes("ilp-console-step"):
+            ui.label(f"you: {result.step.prompt}").classes("ilp-console-you")
+            ui.label(f"$ {result.command}").classes("ilp-console-cmd")
+            ui.label(result.output).classes("ilp-console-out")
+            ui.label(f"why: {result.step.explanation}").classes("ilp-console-why")
         actions.clear()
         with actions:
             if session.finished:
-                ui.label("Session complete - every command above really ran on this repo.").classes(
-                    "text-xs text-green-300"
+                ui.label("Session complete — every command above really ran on this repo.").classes(
+                    "text-base text-green-800"
                 )
                 ui.button("Restart session", on_click=restart, icon="replay").props("flat dense")
             else:
@@ -106,22 +104,25 @@ def _build_console() -> None:
 def _build_timelines() -> None:
     with ui.card().classes("w-full p-4 gap-3"):
         with ui.row().classes("items-center gap-2"):
-            ui.icon("timeline").classes("text-2xl")
+            ui.icon("timeline", size="1.5rem")
             ui.label("Commit timelines").classes("text-lg font-bold")
-        with ui.tabs() as tabs:
-            real_tab = ui.tab("this repo (real)", icon="verified")
-            bad_tab = ui.tab("bad example", icon="report_problem")
-        with ui.tab_panels(tabs, value=real_tab):
-            with ui.tab_panel(real_tab), ui.column().classes("w-full gap-1") as real_content:
-                for entry in timeline.real_timeline():
-                    _render_entry(entry, real_content)
-            with ui.tab_panel(bad_tab), ui.column().classes("w-full gap-1") as bad_content:
-                for entry in timeline.bad_timeline():
-                    _render_entry(entry, bad_content)
         ui.label(
-            "Real history: atomic commits, each with a Manifest: trailer tracing it to the spec. "
-            "Bad history: giant merges, no traceability. Same data structure, different discipline."
-        ).classes("text-xs text-gray-500")
+            "This repo's commits next to a labelled-bad timeline. Same shape, different discipline."
+        ).classes("ilp-lede")
+        ui.label("Green is this checkout. Red is fiction, labelled as such.").classes(
+            "text-base text-gray-500"
+        )
+        with ui.grid(columns=2).classes("w-full gap-4"):
+            with ui.column().classes("w-full gap-1"):
+                ui.label("this repo (real)").classes("font-semibold text-green-800")
+                with ui.column().classes("w-full gap-1 max-h-96 overflow-auto") as real_content:
+                    for entry in timeline.real_timeline():
+                        _render_entry(entry, real_content)
+            with ui.column().classes("w-full gap-1"):
+                ui.label("bad example").classes("font-semibold text-red-800")
+                with ui.column().classes("w-full gap-1 max-h-96 overflow-auto") as bad_content:
+                    for entry in timeline.bad_timeline():
+                        _render_entry(entry, bad_content)
 
 
 def build_git_tab() -> None:

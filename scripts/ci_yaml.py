@@ -26,7 +26,9 @@ LIVE_WORKFLOW = ROOT / ".github" / "workflows" / "ci.yml"
 
 # Command fragments kept short so the template lines fit the 100-char limit.
 TARGETS = "app.py art panel review git_discipline explain loadtest scripts tests"
-PACKAGES = "nicegui hypothesis pytest pytest-cov coverage ruff mypy radon bandit pip-audit"
+PACKAGES = (
+    "nicegui hypothesis pytest pytest-cov coverage ruff mypy radon bandit pip-audit types-PyYAML"
+)
 INSTALL_CMD = f"python -m pip install {PACKAGES}"
 RADON_PKGS = "art panel review git_discipline explain loadtest scripts"
 # CI installs k6 into /tmp; this is command text, not a local tempfile. nosec B108

@@ -25,13 +25,18 @@ def health() -> dict[str, str]:
 
 
 panel_render.register_api()
+art_render.register_routes()
 
 
 @ui.page("/")
 def index() -> None:
-    with ui.header().classes("items-center justify-between gap-3 bg-white border-b px-6"):
-        art_render.render_logo(size="h-10 w-10")
-        ui.label("a Python app that proves its own quality").classes("text-xs text-gray-400")
+    art_render.apply_theme()
+    with ui.column().classes("w-full items-center ilp-landing"):
+        art_render.render_lockup(size="w-40")
+        ui.label("Rendered by the code you're about to inspect.").classes("ilp-caption")
+        ui.link("Read the letter", "#ilp-letter").classes("ilp-link")
+        art_render.render_chrome_links()
+    explain_render.build_letter()
 
     with ui.tabs().classes("w-full") as tabs:
         quality_tab = ui.tab("Quality", icon="monitoring")
@@ -40,7 +45,7 @@ def index() -> None:
         git_tab = ui.tab("Git discipline", icon="commit")
         load_tab = ui.tab("Load test", icon="speed")
 
-    with ui.tab_panels(tabs, value=quality_tab).classes("w-full"):
+    with ui.tab_panels(tabs, value=quality_tab).classes("w-full p-6"):
         with ui.tab_panel(quality_tab):
             panel_render.build_panel()
         with ui.tab_panel(review_tab):
@@ -52,13 +57,14 @@ def index() -> None:
         with ui.tab_panel(load_tab):
             loadtest_render.build_loadtest_tab()
 
-    with ui.footer().classes("items-center justify-center gap-2 bg-white border-t py-2"):
-        ui.label("Otrobonita AI Labs - Jesper Karlsson").classes("text-[11px] text-gray-400")
-        ui.label("pure Python, no fakes").classes("text-[11px] text-gray-300")
+    with ui.footer().classes("items-center justify-center gap-3 py-3 flex-wrap"):
+        ui.label("Otrobonita AI Labs — Jesper Karlsson")
+        art_render.render_chrome_links()
+        ui.label("pure Python, no fakes").classes("ilp-mono")
 
 
 ui.run(
-    title="I love py - quality you can see",
+    title="I❤PY",
     port=APP_PORT,
     reload=False,
     show=False,

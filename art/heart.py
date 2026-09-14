@@ -36,35 +36,93 @@ def heart_points(n: int = 240) -> list[HeartPoint]:
     return [heart_point(2.0 * math.pi * i / n) for i in range(n)]
 
 
-def svg_path(points: list[HeartPoint], scale: float = 12.0, origin_y: float = 0.0) -> str:
+@dataclass(frozen=True)
+class HeartProjection:
+    """SVG mapping: X = origin_x + x * scale, Y = origin_y - y * scale."""
+
+    origin_x: float
+    origin_y: float
+    width: float
+    height: float
+    scale: float
+    padding: float
+
+    def xy(self, point: HeartPoint) -> tuple[float, float]:
+        """Project one math-space point into the viewBox."""
+        return (self.origin_x + point.x * self.scale, self.origin_y - point.y * self.scale)
+
+
+def project(
+    points: list[HeartPoint],
+    *,
+    scale: float = 12.0,
+    padding: float = 8.0,
+) -> HeartProjection:
+    """Choose origin and viewBox so every sampled point sits inside the box."""
+    if not points:
+        raise ValueError("need points to project")
+    xs = [p.x for p in points]
+    ys = [p.y for p in points]
+    min_x, max_x = min(xs), max(xs)
+    min_y, max_y = min(ys), max(ys)
+    width = (max_x - min_x) * scale + 2.0 * padding
+    height = (max_y - min_y) * scale + 2.0 * padding
+    origin_x = padding - min_x * scale
+    origin_y = padding + max_y * scale
+    return HeartProjection(origin_x, origin_y, width, height, scale, padding)
+
+
+def svg_path(
+    points: list[HeartPoint],
+    scale: float = 12.0,
+    origin_y: float = 0.0,
+    origin_x: float = 0.0,
+) -> str:
     """Turn heart points into an SVG path d-attribute (SVG y grows downward)."""
     if not points:
         return ""
 
-    def project(point: HeartPoint) -> str:
-        return f"{point.x * scale:.2f} {origin_y - point.y * scale:.2f}"
+    def xy(point: HeartPoint) -> str:
+        return f"{origin_x + point.x * scale:.2f} {origin_y - point.y * scale:.2f}"
 
-    parts = [f"M {project(points[0])}"]
-    parts += [f"L {project(point)}" for point in points[1:]]
+    parts = [f"M {xy(points[0])}"]
+    parts += [f"L {xy(point)}" for point in points[1:]]
     parts.append("Z")
     return " ".join(parts)
+
+
+HEART_RED = "#EE1C25"
+
+
+def overlay_svg(points: list[HeartPoint], *, scale: float = 12.0) -> str:
+    """Parametric heart for the landing lockup. ViewBox contains the curve."""
+    if not points:
+        return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"></svg>'
+    proj = project(points, scale=scale)
+    path = svg_path(points, scale=proj.scale, origin_x=proj.origin_x, origin_y=proj.origin_y)
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" class="ilp-heart" '
+        f'viewBox="0 0 {proj.width:.2f} {proj.height:.2f}" role="img" '
+        f'aria-label="parametric heart">'
+        f'<path class="ilp-heart-path" d="{path}" fill="{HEART_RED}" '
+        f'stroke="{HEART_RED}" stroke-width="1.2" pathLength="1" '
+        f'stroke-dasharray="1" stroke-dashoffset="1"/>'
+        f"</svg>"
+    )
 
 
 def to_svg(
     points: list[HeartPoint],
     scale: float = 12.0,
-    fill: str = "#ff4d6d",
+    fill: str = HEART_RED,
 ) -> str:
     """Render the heart as a standalone, self-contained SVG string."""
     if not points:
         return '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"></svg>'
-    xs = [p.x for p in points]
-    ys = [p.y for p in points]
-    half_w = (max(xs) - min(xs)) / 2.0 * scale + 8.0
-    half_h = (max(ys) - min(ys)) / 2.0 * scale + 8.0
-    width = round(2 * half_w)
-    height = round(2 * half_h)
-    path = svg_path(points, scale=scale, origin_y=half_h - (max(ys) + min(ys)) / 2.0 * scale)
+    proj = project(points, scale=scale)
+    path = svg_path(points, scale=proj.scale, origin_x=proj.origin_x, origin_y=proj.origin_y)
+    width = round(proj.width)
+    height = round(proj.height)
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
         f'width="{width}" height="{height}">'

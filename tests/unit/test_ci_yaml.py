@@ -50,6 +50,13 @@ def test_radon_step_is_a_real_gate_not_a_display() -> None:
     assert "exit 1" in radon  # and fail the job if any exist
 
 
+def test_quality_install_includes_yaml_stubs_for_mypy() -> None:
+    """mypy --strict imports yaml in scripts/ci_yaml.py; CI must have the stubs."""
+    text = ci_yaml.build_yaml()
+    assert "types-PyYAML" in text
+    assert "types-PyYAML" in ci_yaml.PACKAGES
+
+
 def test_live_workflow_matches_the_generated_one() -> None:
     """Drift gate: the live .github/workflows/ci.yml must equal the generator output."""
     import scripts.ci_yaml as mod
