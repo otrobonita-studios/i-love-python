@@ -21,3 +21,4 @@ def test_hero_copy_matches_the_visual_contract() -> None:
     assert "looks like it means it" in hero_copy.MUTED
     assert "sin³" in hero_copy.FORMULA
     assert hero_copy.READ_LETTER == "Read the letter"
+    assert not hasattr(hero_copy, "CLICK_HEART")

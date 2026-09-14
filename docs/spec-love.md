@@ -408,7 +408,6 @@ letter.
 [mono, subtle, **clickable**] How Python thinks of its heart
                              x = 16 sin³ t    y = 13 cos t − 5 cos 2t − 2 cos 3t − cos 4t
 [ink button] Read the letter
-[subtle] Click the heart to draw it again.
 ```
 
 - Full viewport height. Centered. Paper grain optional, not required.

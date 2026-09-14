@@ -135,7 +135,6 @@ def render_hero() -> None:
             ui.label(hero_copy.FORMULA)
         formula.on("click", dialog.open)
         ui.link(hero_copy.READ_LETTER, "/letter").classes("ilp-btn-ink")
-        ui.label(hero_copy.CLICK_HEART).classes("ilp-click-hint")
 
 
 def render_curve_section() -> None:

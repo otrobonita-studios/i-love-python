@@ -178,11 +178,6 @@ a:hover, a.ilp-link:hover, .nicegui-link:hover {{
   text-decoration: none !important;
   opacity: 0.92;
 }}
-.ilp-click-hint {{
-  color: {SUBTLE};
-  font-size: 1rem;
-  margin: 0.4rem 0 0;
-}}
 .ilp-tagline {{
   font-family: "IBM Plex Mono", ui-monospace, monospace;
   color: var(--ink-faint);
