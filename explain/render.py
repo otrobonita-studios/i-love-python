@@ -52,9 +52,9 @@ def build_intro() -> None:
             ui.label(line)
         ui.label(intro.PLAN_HEADING).classes("ilp-letter-title")
         ui.label(" → ".join(intro.STACK)).classes("ilp-mono")
-        with ui.element("div").classes("grid grid-cols-1 md:grid-cols-2 gap-3 w-full"):
+        with ui.element("div").classes("ilp-card-grid"):
             for room in intro.ROOMS:
-                with ui.card().classes("p-4 gap-2"):
+                with ui.card().classes("p-6 gap-2"):
                     ui.link(f"{room.number}  {room.name}", room.href).classes("ilp-nav-item")
                     ui.label(room.line)
                     ui.label(room.path).classes("ilp-mono")

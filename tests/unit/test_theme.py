@@ -91,6 +91,19 @@ def test_console_step_uses_ink_on_paper() -> None:
     assert "sky-300" not in css
 
 
+def test_cards_are_surface_on_a_two_column_grid() -> None:
+    css = root_css()
+    card = css.split(".q-card {", 1)[1].split("}", 1)[0]
+    assert f"background: {SURFACE}" in card
+    assert "border-radius: 16px" in card
+    grid = css.split(".ilp-card-grid {", 1)[1].split("}", 1)[0]
+    assert "gap: 1.5rem" in grid
+    assert "grid-template-columns: 1fr" in grid
+    two_col = css.split("@media (min-width: 768px) {", 1)[1]
+    assert "repeat(2, minmax(0, 1fr))" in two_col.split("}", 1)[0]
+    assert "xl:grid-cols-4" not in css
+
+
 def test_zen_out_uses_paper_surface() -> None:
     css = root_css()
     zen = css.split(".ilp-zen-out {", 1)[1].split("}", 1)[0]

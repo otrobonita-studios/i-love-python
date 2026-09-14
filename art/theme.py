@@ -284,7 +284,25 @@ a:hover, a.ilp-link:hover, .nicegui-link:hover {{
   background: {SURFACE} !important;
   box-shadow: none !important;
   border: 1px solid {HAIR} !important;
-  border-radius: 10px !important;
+  border-radius: 16px !important;
+}}
+.q-card .q-card__section {{
+  background: {SURFACE} !important;
+}}
+.ilp-card-grid {{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  align-items: stretch;
+}}
+.ilp-card-span {{
+  grid-column: 1 / -1;
+}}
+@media (min-width: 768px) {{
+  .ilp-card-grid {{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }}
 }}
 .q-tab-panels {{
   background: transparent !important;
@@ -579,5 +597,6 @@ a:hover, a.ilp-link:hover, .nicegui-link:hover {{
   background: {SURFACE} !important;
   border: 1px solid {HAIR} !important;
   box-shadow: none !important;
+  border-radius: 16px !important;
 }}
 """

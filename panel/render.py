@@ -45,7 +45,7 @@ def _badge(status: str) -> None:
 def _tool_card(result: telemetry.ToolResult) -> None:
     icon = "verified" if result.status == "pass" else "report_problem"
     guide = glossary.lookup(result.name)
-    with ui.card().classes("w-full gap-1 p-3").props(f"id={glossary.tool_anchor(result.name)}"):
+    with ui.card().classes("w-full gap-2 p-6").props(f"id={glossary.tool_anchor(result.name)}"):
         with ui.row().classes("items-center justify-between w-full gap-2"):
             with ui.row().classes("items-center gap-2"):
                 ui.icon(icon, size="1.25rem")
@@ -73,68 +73,70 @@ def _render_report(report: telemetry.TelemetryReport, content: ui.column) -> Non
             ui.label(f"Python {report.python}")
             ui.label(f"generated {report.generated_at}")
 
-        with ui.element("div").classes(
-            "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 w-full"
-        ):
+        with ui.element("div").classes("ilp-card-grid"):
             for result in report.tools:
                 _tool_card(result)
 
-        with ui.card().classes("w-full p-3 gap-2"):
-            with ui.row().classes("items-center gap-2 flex-wrap"):
-                ui.label("Coverage by file (real pytest --cov run)").classes(
-                    "font-semibold text-base"
-                )
-                ui.link("pytest-cov docs", glossary.PYTEST_COV_HREF, new_tab=True).classes(
-                    "ilp-link"
-                ).props("rel=noopener noreferrer")
-            if report.coverage_files:
-                for file in report.coverage_files:
-                    with ui.row().classes("items-center gap-3 w-full"):
-                        ui.label(file.path).classes("w-72 truncate font-mono text-base")
-                        ui.linear_progress(value=file.pct / 100.0, show_value=False).classes(
-                            "flex-grow"
-                        )
-                        ui.label(f"{file.covered}/{file.total} ({file.pct:.1f}%)").classes(
-                            "w-28 text-right text-base"
-                        )
-            else:
-                ui.label("No coverage data - see the pytest result above for why.").classes(
-                    "text-base"
-                )
-            with ui.row().classes("items-center gap-3 w-full"):
-                ui.label("Overall").classes("font-semibold text-base")
-                ui.linear_progress(
-                    value=(report.coverage_pct / 100.0) if report.coverage_pct else 0.0,
-                    show_value=False,
-                ).classes("flex-grow")
-                label = f"{report.coverage_pct:.1f}%" if report.coverage_pct is not None else "n/a"
-                ui.label(label).classes("w-28 text-right text-base font-semibold")
+            with ui.card().classes("w-full p-6 gap-2 ilp-card-span"):
+                with ui.row().classes("items-center gap-2 flex-wrap"):
+                    ui.label("Coverage by file (real pytest --cov run)").classes(
+                        "font-semibold text-base"
+                    )
+                    ui.link("pytest-cov docs", glossary.PYTEST_COV_HREF, new_tab=True).classes(
+                        "ilp-link"
+                    ).props("rel=noopener noreferrer")
+                if report.coverage_files:
+                    for file in report.coverage_files:
+                        with ui.row().classes("items-center gap-3 w-full"):
+                            ui.label(file.path).classes("w-72 truncate font-mono text-base")
+                            ui.linear_progress(value=file.pct / 100.0, show_value=False).classes(
+                                "flex-grow"
+                            )
+                            ui.label(f"{file.covered}/{file.total} ({file.pct:.1f}%)").classes(
+                                "w-28 text-right text-base"
+                            )
+                else:
+                    ui.label("No coverage data - see the pytest result above for why.").classes(
+                        "text-base"
+                    )
+                with ui.row().classes("items-center gap-3 w-full"):
+                    ui.label("Overall").classes("font-semibold text-base")
+                    ui.linear_progress(
+                        value=(report.coverage_pct / 100.0) if report.coverage_pct else 0.0,
+                        show_value=False,
+                    ).classes("flex-grow")
+                    label = (
+                        f"{report.coverage_pct:.1f}%" if report.coverage_pct is not None else "n/a"
+                    )
+                    ui.label(label).classes("w-28 text-right text-base font-semibold")
 
-        with ui.card().classes("w-full p-3 gap-2"):
-            ui.label("Complexity (real radon cc run)").classes("font-semibold text-base")
-            if report.complexity is not None:
-                ui.label(telemetry.complexity_detail(report.complexity)).classes(
-                    "text-base font-mono"
-                )
-            else:
-                ui.label("Complexity data unavailable.").classes("text-base")
-            for rank, meaning in glossary.RADON_LEGEND:
-                ui.label(f"{rank} — {meaning}").classes("text-base")
+            with ui.card().classes("w-full p-6 gap-2"):
+                ui.label("Complexity (real radon cc run)").classes("font-semibold text-base")
+                if report.complexity is not None:
+                    ui.label(telemetry.complexity_detail(report.complexity)).classes(
+                        "text-base font-mono"
+                    )
+                else:
+                    ui.label("Complexity data unavailable.").classes("text-base")
+                for rank, meaning in glossary.RADON_LEGEND:
+                    ui.label(f"{rank} — {meaning}").classes("text-base")
 
-        with ui.card().classes("w-full p-3 gap-1"):
-            ui.label("The honest summary").classes("font-semibold text-base")
-            failed = [t for t in report.tools if t.status == "fail"]
-            unavailable = [t for t in report.tools if t.status == "unavailable"]
-            if not failed and not unavailable:
-                ui.label("Every tool passed. Nothing is simulated - this is their actual output.")
-            else:
-                for tool in failed:
-                    ui.label(f"{tool.name}: {tool.detail}")
-                for tool in unavailable:
-                    ui.label(f"{tool.name}: {tool.detail}")
-                ui.label("These are real failures or limitations, shown as-is. No fakes.").classes(
-                    "text-base"
-                )
+            with ui.card().classes("w-full p-6 gap-1"):
+                ui.label("The honest summary").classes("font-semibold text-base")
+                failed = [t for t in report.tools if t.status == "fail"]
+                unavailable = [t for t in report.tools if t.status == "unavailable"]
+                if not failed and not unavailable:
+                    ui.label(
+                        "Every tool passed. Nothing is simulated - this is their actual output."
+                    )
+                else:
+                    for tool in failed:
+                        ui.label(f"{tool.name}: {tool.detail}")
+                    for tool in unavailable:
+                        ui.label(f"{tool.name}: {tool.detail}")
+                    ui.label(
+                        "These are real failures or limitations, shown as-is. No fakes."
+                    ).classes("text-base")
 
 
 async def _refresh(content: ui.column) -> None:
@@ -160,7 +162,7 @@ async def _refresh(content: ui.column) -> None:
 
 def build_panel() -> None:
     """Build the Quality tab and start with a real collection run."""
-    with ui.card().classes("w-full p-4 gap-3"):
+    with ui.column().classes("w-full gap-6"):
         with ui.row().classes("items-center gap-2"):
             ui.icon("monitoring", size="1.5rem")
             ui.label("Quality telemetry").classes("text-lg font-bold")
@@ -170,7 +172,7 @@ def build_panel() -> None:
             "N/A means unavailable — never a fake pass. New to these names? Stay on "
             "the cards, or skip to the field guide."
         ).classes("ilp-lede")
-        with ui.column().classes("w-full gap-3") as content:
+        with ui.column().classes("w-full gap-6") as content:
             pass
         ui.button(
             "Re-run quality stack",
