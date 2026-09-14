@@ -43,12 +43,10 @@ def _badge(status: str) -> None:
 
 
 def _tool_card(result: telemetry.ToolResult) -> None:
-    icon = "verified" if result.status == "pass" else "report_problem"
     guide = glossary.lookup(result.name)
     with ui.card().classes("w-full gap-2 p-6").props(f"id={glossary.tool_anchor(result.name)}"):
         with ui.row().classes("items-center justify-between w-full gap-2"):
             with ui.row().classes("items-center gap-2"):
-                ui.icon(icon, size="1.25rem")
                 ui.label(result.name).classes("font-semibold")
                 if guide is not None:
                     ui.label(guide.kind).classes("ilp-kind")
