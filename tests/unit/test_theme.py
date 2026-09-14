@@ -1,6 +1,6 @@
 """Tests for art/theme.py (wiring-diagram tokens, no NiceGUI)."""
 
-from art.theme import FONT_HREF, LIGHT, PAPER, font_links, root_css
+from art.theme import FONT_HREF, LIGHT, PAPER, SURFACE, font_links, root_css
 
 
 def test_light_palette_matches_the_wiring_diagram() -> None:
@@ -89,6 +89,17 @@ def test_console_step_uses_ink_on_paper() -> None:
     assert "color: var(--ink-soft)" in why
     assert "gray-300" not in css
     assert "sky-300" not in css
+
+
+def test_zen_out_uses_paper_surface() -> None:
+    css = root_css()
+    zen = css.split(".ilp-zen-out {", 1)[1].split("}", 1)[0]
+    assert f"background: {SURFACE}" in zen
+    assert "background: var(--surface)" not in zen
+    assert "font-size: 13px" in zen
+    assert "padding: 1.75rem 1.5rem 1.5rem 1.5rem" in zen
+    assert "margin-top: 10px" in zen
+    assert "margin-bottom: 20px" in zen
 
 
 def test_css_is_deterministic() -> None:

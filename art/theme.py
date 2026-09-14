@@ -445,11 +445,14 @@ a:hover, a.ilp-link:hover, .nicegui-link:hover {{
 .ilp-zen-out {{
   font-family: "IBM Plex Mono", ui-monospace, monospace;
   white-space: pre-wrap;
-  background: var(--surface);
+  background: {SURFACE};
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 0.75rem 1rem;
-  color: {LETTER_INK};
+  padding: 1.75rem 1.5rem 1.5rem 1.5rem;
+  color: {INK};
+  font-size: 13px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }}
 .ilp-this-caption {{
   color: var(--ink-soft);
