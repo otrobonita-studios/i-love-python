@@ -45,6 +45,14 @@ def test_typeset_does_not_markdown_dunder_init() -> None:
     assert "/quality#tool-ruff-format" in closing
 
 
+def test_zen_button_toggles_hide_then_execute() -> None:
+    assert zen.after_press(False) == (True, zen.HIDE_LABEL)
+    assert zen.after_press(True) == (False, zen.EXECUTE_LABEL)
+    assert zen.EXECUTE_LABEL == "Execute"
+    assert zen.HIDE_LABEL == "Hide"
+    assert zen.HIDE_LABEL != "Again"
+
+
 def test_zen_is_decoded_from_cpython_this() -> None:
     text = zen.zen_of_python()
     assert text.startswith("The Zen of Python, by Tim Peters")

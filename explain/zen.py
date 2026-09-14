@@ -9,6 +9,15 @@ import codecs
 import contextlib
 import io
 
+EXECUTE_LABEL = "Execute"
+HIDE_LABEL = "Hide"
+
+
+def after_press(showing: bool) -> tuple[bool, str]:
+    """Execute reveals the Zen; Hide puts the card away and restores Execute."""
+    now = not showing
+    return now, HIDE_LABEL if now else EXECUTE_LABEL
+
 
 def zen_of_python() -> str:
     """Return the Zen as plain English, from `this.s`."""

@@ -156,8 +156,9 @@ The reused love letter is the one that already shipped with the language.
 
 - Code well on the left. **Execute is outside the well**, same row, right.
 - Never inside the chip. Never stacked under it at any breakpoint.
-- Play icon is a filled triangle, not a chevron or `>`. After the first run
-  the label becomes **Again** (rotate icon acceptable).
+- Play icon is a filled triangle, not a chevron or `>`. After Execute the
+  label becomes **Hide**. Hide removes the Zen card (the whole well) and
+  the button becomes **Execute** again.
 - Row does not wrap. Code well `flex: 1; min-width: 0`. Button does not shrink.
 
 ### 3.2 Output
@@ -292,7 +293,8 @@ diagram. Coverage floor stays 70%.
       nudged ~10px right of the I.
 - [ ] Letter text matches §2.2. Voice not rewritten.
 - [ ] `>>> import this` Execute sits outside the code well, same row, play
-      icon. Output is decoded `this.s`, not typed English.
+      icon. Hide puts the Zen card away and restores Execute. Output is
+      decoded `this.s`, not typed English.
 - [ ] Each of the eight tools has a what-sentence and a docs link on the card.
 - [ ] pytest and lang-audit failures still show as failures.
 - [ ] `scripts/lang_audit.py` still exits 0. No new hand-authored JS/CSS/sh.

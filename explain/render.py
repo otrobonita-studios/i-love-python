@@ -24,19 +24,26 @@ def _import_this() -> None:
     with ui.row().classes("ilp-this-row items-center gap-3 w-full"):
         with ui.element("div").classes("ilp-this-well"):
             ui.label(">>> import this").classes("ilp-mono")
-        btn = ui.button("Execute", icon="play_arrow")
+        btn = ui.button(zen_mod.EXECUTE_LABEL, icon="play_arrow")
     output = ui.column().classes("w-full gap-2")
     caption = ui.label(letter.IDLE_CAPTION).classes("ilp-this-caption")
+    shown = False
 
-    def run() -> None:
+    def toggle() -> None:
+        nonlocal shown
+        shown, label = zen_mod.after_press(shown)
+        btn.set_text(label)
         output.clear()
-        with output:
-            ui.label(zen_mod.zen_of_python()).classes("ilp-zen-out")
-        caption.set_text(letter.ZEN_CAPTION)
-        btn.set_text("Again")
-        btn.props("icon=replay")
+        if shown:
+            with output:
+                ui.label(zen_mod.zen_of_python()).classes("ilp-zen-out")
+            caption.set_text(letter.ZEN_CAPTION)
+            btn.props("icon=visibility_off")
+        else:
+            caption.set_text(letter.IDLE_CAPTION)
+            btn.props("icon=play_arrow")
 
-    btn.on_click(run)
+    btn.on_click(toggle)
 
 
 def build_intro() -> None:
