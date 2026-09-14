@@ -64,7 +64,7 @@ def index() -> None:
 
 
 ui.run(
-    title="I love py - quality you can see",
+    title="I❤PY",
     port=APP_PORT,
     reload=False,
     show=False,
