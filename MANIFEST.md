@@ -11,8 +11,8 @@ real git diffs from this repo, and the load test hits this very app.
 
 | Mode | What it does | Backed by | Verified by |
 |---|---|---|---|
-| 💗 **Landing** | The heart, the promise | `art/heart.py` (parametric curve, pure math), `art/logo.py` (I❤PY wordmark, generated SVG) | `pytest tests/unit/test_heart.py tests/unit/test_logo.py` |
-| 📊 **Quality telemetry** | Real `ruff`, `mypy --strict`, `pytest --cov`, `radon`, `bandit`, `pip-audit` runs | `panel/telemetry.py` | `python -m panel.telemetry` (prints the same report the panel shows) |
+| 💗 **Landing** | The heart, the letter, the promise | `art/heart.py` (parametric curve + viewBox), `art/logo.py` (I/PY letters), `explain/letter.py` (canonical copy), `explain/zen.py` (`this.s` rot13) | `pytest tests/unit/test_heart.py tests/unit/test_logo.py tests/unit/test_letter.py` |
+| 📊 **Quality telemetry** | Real `ruff`, `mypy --strict`, `pytest --cov`, `radon`, `bandit`, `pip-audit` runs, each with a glossary row | `panel/telemetry.py`, `explain/glossary.py` | `python -m panel.telemetry`; `pytest tests/unit/test_letter.py` |
 | 🗣️ **Review** | Purist / Skeptic / Pragmatist verdicts on real commit diffs | `review/personas.py`, `review/store.py` | `pytest tests/unit/test_personas.py` |
 | 🕰️ **Git discipline** | A guided "ask git" session debugging a real bug in this repo's history, plus a good-vs-bad commit timeline | `git_discipline/console.py`, `git_discipline/timeline.py` | `pytest tests/unit/test_timeline.py` |
 | 🏋️ **Load test** | k6 script *generated from a Python dataclass*, run (k6 or Python VU simulator), NDJSON parsed in Python into a live chart | `loadtest/spec.py`, `loadtest/generate.py`, `loadtest/report.py`, `loadtest/simulator.py` | `pytest tests/integration/test_full_loop.py` |

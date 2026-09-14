@@ -7,6 +7,7 @@ unavailable, the panel says so - it never paints a green picture.
 
 from nicegui import run, ui
 
+from explain import glossary
 from explain.translator import explain_tool
 from panel import telemetry
 
@@ -43,16 +44,25 @@ def _badge(status: str) -> None:
 
 def _tool_card(result: telemetry.ToolResult) -> None:
     icon = "verified" if result.status == "pass" else "report_problem"
-    with ui.card().classes("w-full gap-1 p-3"):
+    guide = glossary.lookup(result.name)
+    with ui.card().classes("w-full gap-1 p-3").props(f"id={glossary.tool_anchor(result.name)}"):
         with ui.row().classes("items-center justify-between w-full gap-2"):
             with ui.row().classes("items-center gap-2"):
                 ui.icon(icon, size="1.25rem")
                 ui.label(result.name).classes("font-semibold")
+                if guide is not None:
+                    ui.label(guide.kind).classes("ilp-kind")
             _badge(result.status)
-        ui.label(result.detail).classes("text-base text-gray-600 w-full break-words")
-        with ui.expansion("command and plain English").classes("w-full"):
-            ui.label(result.command).classes("text-base text-gray-500 w-full font-mono break-all")
-            ui.label(f"{result.duration_ms} ms").classes("text-base text-gray-500")
+        ui.label(result.command).classes("text-base ilp-mono w-full break-all")
+        if guide is not None:
+            ui.label(guide.what).classes("text-base w-full")
+        ui.label(f"This run. {result.detail}").classes("text-base w-full break-words")
+        if guide is not None:
+            ui.link("Official docs", guide.href, new_tab=True).classes("ilp-link").props(
+                "rel=noopener noreferrer"
+            )
+        with ui.expansion("command and this run").classes("w-full"):
+            ui.label(f"{result.duration_ms} ms").classes("text-base")
             ui.label(explain_tool(result.name, result.status, result.detail))
 
 
@@ -70,7 +80,13 @@ def _render_report(report: telemetry.TelemetryReport, content: ui.column) -> Non
                 _tool_card(result)
 
         with ui.card().classes("w-full p-3 gap-2"):
-            ui.label("Coverage by file (real pytest --cov run)").classes("font-semibold text-base")
+            with ui.row().classes("items-center gap-2 flex-wrap"):
+                ui.label("Coverage by file (real pytest --cov run)").classes(
+                    "font-semibold text-base"
+                )
+                ui.link("pytest-cov docs", glossary.PYTEST_COV_HREF, new_tab=True).classes(
+                    "ilp-link"
+                ).props("rel=noopener noreferrer")
             if report.coverage_files:
                 for file in report.coverage_files:
                     with ui.row().classes("items-center gap-3 w-full"):
@@ -102,6 +118,8 @@ def _render_report(report: telemetry.TelemetryReport, content: ui.column) -> Non
                 )
             else:
                 ui.label("Complexity data unavailable.").classes("text-base")
+            for rank, meaning in glossary.RADON_LEGEND:
+                ui.label(f"{rank} — {meaning}").classes("text-base")
 
         with ui.card().classes("w-full p-3 gap-1"):
             ui.label("The honest summary").classes("font-semibold text-base")
@@ -149,7 +167,8 @@ def build_panel() -> None:
         ui.label(
             "Real ruff, mypy --strict, pytest --cov, radon, bandit, pip-audit, and "
             "lang-audit on this checkout. Re-run to watch the same commands CI runs. "
-            "N/A means unavailable — never a fake pass."
+            "N/A means unavailable — never a fake pass. New to these names? Stay on "
+            "the cards, or skip to the field guide."
         ).classes("ilp-lede")
         with ui.column().classes("w-full gap-3") as content:
             pass
@@ -163,6 +182,9 @@ def build_panel() -> None:
             _render_report(cached, content)
         else:
             ui.timer(0.4, lambda: _refresh(content), once=True)
+    from explain.render import build_field_guide
+
+    build_field_guide()
 
 
 def register_api() -> None:

@@ -19,7 +19,7 @@ browser
 
 | Mode | Logic | Data flow |
 |---|---|---|
-| Landing | `art/heart.py` | the exact parametric heart curve (spec §1), serialized to SVG server-side; drawn in the app header by `art/render.py`, with `heart_svg()` available for tests and embedding |
+| Landing | `art/heart.py` + `explain/letter.py` | parametric heart overlay on the I❤PY letters (draw, 8 beats, stop); love letter + live `import this` before telemetry; `heart_svg()` still available for tests |
 | Quality | `panel/telemetry.py` | shells out to eight real tools in parallel (ruff format, ruff lint, mypy, pytest, radon, bandit, pip-audit, lang-audit), parses their actual output, renders each check with its real exit code; snapshot to `generated/telemetry/report.json` (gitignored) |
 | Review | `review/store.py` → `review/personas.py` | `git log --patch` → per-commit diffs → three deterministic heuristics → verdicts + consensus; raw diff one click away |
 | Explain | `explain/translator.py` | per-hunk plain-English "what changed / why it matters / risk" from real commit diffs |

@@ -32,10 +32,11 @@ art_render.register_routes()
 def index() -> None:
     art_render.apply_theme()
     with ui.column().classes("w-full items-center ilp-landing"):
-        art_render.render_logo(size="w-40")
+        art_render.render_lockup(size="w-40")
         ui.label("Rendered by the code you're about to inspect.").classes("ilp-caption")
-        ui.label("a Python app that proves its own quality").classes("ilp-tagline")
+        ui.link("Read the letter", "#ilp-letter").classes("ilp-link")
         art_render.render_chrome_links()
+    explain_render.build_letter()
 
     with ui.tabs().classes("w-full") as tabs:
         quality_tab = ui.tab("Quality", icon="monitoring")
