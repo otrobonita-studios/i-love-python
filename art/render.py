@@ -53,20 +53,24 @@ def render_lockup(size: str = "") -> None:
 
 
 def render_nav() -> None:
-    """Sticky top menu. Not Quasar tabs. Mark on the left is always home."""
-    with ui.element("header").classes("ilp-nav"):
-        with ui.link("", "#hero").classes("ilp-nav-mark"):
-            render_lockup()
-        links = ui.row().classes("ilp-nav-links")
-        with links:
-            for name, href in art_links.NAV_ITEMS:
-                ui.link(name, href).classes("ilp-nav-item")
-        ui.link("GitHub", art_links.REPO_HREF, new_tab=True).classes("ilp-nav-github").props(
-            "rel=noopener noreferrer"
-        )
-        ui.button(icon="menu", on_click=lambda: links.classes(toggle="ilp-nav-open")).props(
-            "flat round dense"
-        ).classes("ilp-nav-burger")
+    """Sticky bar: centered max-w-6xl, mark left, sections + GitHub right."""
+    with ui.element("header").classes("ilp-nav"):  # noqa: SIM117 — inner bar must nest
+        with ui.element("div").classes("ilp-nav-inner"):
+            with ui.link("", "#hero").classes("ilp-nav-mark"):
+                ui.html(art_logo.nav_mark_svg())
+                ui.label("Back to top").classes("ilp-sr-only")
+            links = ui.element("nav").classes("ilp-nav-links")
+            links.props("aria-label=Sections")
+            with links:
+                for name, href in art_links.NAV_ITEMS:
+                    ui.link(name, href).classes("ilp-nav-item")
+                ui.link("GitHub", art_links.REPO_HREF, new_tab=True).classes(
+                    "ilp-nav-github"
+                ).props("rel=noreferrer")
+            ui.button(
+                icon="menu",
+                on_click=lambda: links.classes(toggle="ilp-nav-open"),
+            ).props('flat round dense aria-label="Open menu"').classes("ilp-nav-burger")
 
 
 def render_curve_lab() -> None:
@@ -120,7 +124,7 @@ def render_hero() -> None:
         render_curve_essay()
         render_curve_lab()
 
-    with ui.element("section").classes("ilp-hero").props("id=hero"):
+    with ui.element("section").classes("ilp-hero w-full").props("id=hero"):
         ui.label(hero_copy.STUDIO_KICKER).classes("ilp-studio-kicker")
         render_lockup()
         ui.label(hero_copy.CAPTION).classes("ilp-caption")

@@ -106,12 +106,24 @@ GLYPHS: tuple[Glyph, ...] = (HEART, LETTER_P, LETTER_Y, LETTER_I, P_COUNTER)
 LETTER_GLYPHS: tuple[Glyph, ...] = (LETTER_P, LETTER_Y, LETTER_I, P_COUNTER)
 
 
-def _svg_from(glyphs: tuple[Glyph, ...]) -> str:
+def _svg_from(
+    glyphs: tuple[Glyph, ...],
+    *,
+    extra: str = "",
+    counter_fill: str | None = None,
+    title: str | None = None,
+) -> str:
     paths = "".join(
-        f'<path d="{glyph.d}" fill="{glyph.fill}" transform="translate({glyph.x},{glyph.y})"/>'
+        f'<path d="{glyph.d}" fill="'
+        f'{counter_fill if counter_fill is not None and glyph is P_COUNTER else glyph.fill}"'
+        f' transform="translate({glyph.x},{glyph.y})"/>'
         for glyph in glyphs
     )
-    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{VIEW_BOX}">{paths}</svg>'
+    title_el = f"<title>{title}</title>" if title else ""
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{VIEW_BOX}"{extra}>'
+        f"{title_el}{paths}</svg>"
+    )
 
 
 def logo_svg() -> str:
@@ -126,3 +138,13 @@ def logo_svg() -> str:
 def letters_svg() -> str:
     """I and PY only — the landing overlays the parametric heart instead."""
     return _svg_from(LETTER_GLYPHS)
+
+
+def nav_mark_svg() -> str:
+    """40px header mark: full wordmark, Glaser heart included, P-hole is paper."""
+    return _svg_from(
+        GLYPHS,
+        extra=' class="block" role="img" aria-label="I love PY"',
+        counter_fill="var(--color-surface)",
+        title="I love PY",
+    )

@@ -39,6 +39,16 @@ def test_logo_is_deterministic() -> None:
     assert logo.logo_svg() == logo.logo_svg()
 
 
+def test_nav_mark_svg_is_the_full_wordmark() -> None:
+    svg = logo.nav_mark_svg()
+    root = ET.fromstring(svg)
+    assert root.get("aria-label") == "I love PY"
+    assert root.find(f"{SVG_NS}title") is not None
+    assert len(root.findall(f"{SVG_NS}path")) == 5
+    assert logo.HEART.fill in svg
+    assert "var(--color-surface)" in svg
+
+
 def test_letters_svg_omits_the_glaser_heart() -> None:
     svg = logo.letters_svg()
     root = ET.fromstring(svg)

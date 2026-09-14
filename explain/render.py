@@ -43,13 +43,13 @@ def build_intro() -> None:
     """House letter of introduction above the room cards. Canonical copy."""
     from explain import intro
 
-    with ui.element("section").classes("ilp-letter w-full").props("id=house"):
+    with ui.element("section").classes("ilp-letter w-full").props("id=map"):
         ui.label(intro.KICKER).classes("ilp-letter-kicker")
         ui.label(intro.TITLE).classes("ilp-letter-title")
         for paragraph in intro.PARAGRAPHS:
             ui.html(f"<p>{intro.typeset_html(paragraph)}</p>", sanitize=False)
         for line in intro.SIGN_OFF:
-            ui.label(line).classes("ilp-letter")
+            ui.label(line)
         ui.label(intro.PLAN_HEADING).classes("ilp-letter-title")
         ui.label(" → ".join(intro.STACK)).classes("ilp-mono")
         with ui.element("div").classes("grid grid-cols-1 md:grid-cols-2 gap-3 w-full"):

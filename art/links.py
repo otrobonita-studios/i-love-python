@@ -38,7 +38,7 @@ NAV_ITEMS: tuple[tuple[str, str], ...] = (
     ("Curve", "#curve"),
     ("Quality", "#quality"),
     ("Explain", "#explain"),
-    ("House", "#house"),
+    ("House", "#map"),
     ("Review", "#review"),
     ("Git", "#git"),
     ("Load", "#load"),

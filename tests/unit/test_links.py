@@ -44,6 +44,7 @@ def test_nav_items_are_sections_not_tabs() -> None:
         "Load",
         "Listen",
     ]
+    assert dict(NAV_ITEMS)["House"] == "#map"
     assert all(href.startswith("#") for _name, href in NAV_ITEMS)
 
 

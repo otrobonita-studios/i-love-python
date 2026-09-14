@@ -15,6 +15,12 @@ def test_root_css_emits_custom_properties_and_chrome() -> None:
     assert "--ink: #14171f" in css
     assert "--accent: #3552d6" in css
     assert ".ilp-hero" in css
+    assert ".ilp-nav-inner" in css
+    hero = css.split(".ilp-hero {", 1)[1].split("}", 1)[0]
+    assert "width: 100%" in hero
+    assert "justify-content: center" not in hero
+    assert "padding: 2.5rem 1.5rem 3rem" in hero
+    assert "max-width: 72rem" in css.split(".ilp-nav-inner {", 1)[1].split("}", 1)[0]
     assert ".ilp-caption" in css
     assert ".ilp-links" in css
     assert ".ilp-link" in css

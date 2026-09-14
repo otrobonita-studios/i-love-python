@@ -91,6 +91,7 @@ def root_css(palette: Palette = LIGHT) -> str:
   --accent-soft: {p.accent_soft};
   --accent-2: {p.accent_2};
   --accent-2-soft: {p.accent_2_soft};
+  --color-surface: {PAPER};
 }}
 html, body, #app, .q-layout, .q-page, .nicegui-content {{
   background: {PAPER} !important;
@@ -105,15 +106,19 @@ a:hover, a.ilp-link:hover, .nicegui-link:hover {{
   color: {INK} !important;
   text-decoration: underline;
 }}
+.nicegui-content {{
+  align-items: stretch !important;
+  width: 100%;
+}}
 .ilp-hero {{
+  width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
   gap: 0.85rem;
-  padding: 5.5rem 1.5rem 3rem;
+  padding: 2.5rem 1.5rem 3rem;
   background: transparent;
   border: none;
 }}
@@ -463,75 +468,107 @@ a:hover, a.ilp-link:hover, .nicegui-link:hover {{
   position: sticky;
   top: 0;
   z-index: 40;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.6rem 1.25rem;
+  width: 100%;
   background: {PAPER};
   border-bottom: 1px solid {HAIR};
 }}
-.ilp-nav .ilp-lockup {{
-  width: 40px;
-  min-width: 40px;
-  max-width: 40px;
+.ilp-nav-inner {{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 4rem;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 1rem;
 }}
-.ilp-nav .ilp-heart, .ilp-nav .ilp-heart-path {{
-  animation: none;
+@media (min-width: 640px) {{
+  .ilp-nav-inner {{
+    padding: 0 1.5rem;
+  }}
 }}
-.ilp-nav .ilp-heart-path {{
-  fill-opacity: 1;
-  stroke-dashoffset: 0;
+.ilp-nav-mark {{
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}}
+.ilp-nav-mark svg {{
+  display: block;
+  width: 2.5rem;
+  height: 2.5rem;
+}}
+.ilp-sr-only {{
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }}
 .ilp-nav-links {{
-  display: flex;
-  flex-wrap: wrap;
+  display: none;
   align-items: center;
-  gap: 0.2rem 1.1rem;
-  flex: 1;
+  gap: 0.25rem;
   font-family: Newsreader, Palatino, ui-serif, serif;
+}}
+@media (min-width: 1024px) {{
+  .ilp-nav-links {{
+    display: flex;
+  }}
 }}
 .ilp-nav-item {{
-  color: {INK} !important;
+  color: {MUTED} !important;
   text-decoration: none !important;
-  font-size: 1.05rem;
+  font-size: 0.875rem;
+  padding: 0.5rem 0.625rem;
+  border-radius: 6px;
 }}
 .ilp-nav-item:hover {{
-  text-decoration: underline !important;
-}}
-.ilp-nav-github {{
-  border: 1px solid {INK};
-  border-radius: 8px;
-  padding: 0.35rem 0.85rem;
   color: {INK} !important;
   text-decoration: none !important;
-  font-family: Newsreader, Palatino, ui-serif, serif;
+}}
+.ilp-nav-github {{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.25rem;
+  margin-left: 0.5rem;
+  padding: 0 0.75rem;
+  border: 1px solid {HAIR};
+  border-radius: 6px;
+  color: {INK} !important;
+  text-decoration: none !important;
+  font-size: 0.875rem;
+  background: transparent;
 }}
 .ilp-nav-github:hover {{
   text-decoration: none !important;
-  background: {INK};
-  color: {PAPER} !important;
+  background: {SURFACE_2};
 }}
 .ilp-nav-burger {{
-  display: none;
+  display: inline-flex;
   margin-left: auto;
 }}
-@media (max-width: 900px) {{
-  .ilp-nav-links {{
+@media (min-width: 1024px) {{
+  .ilp-nav-burger {{
     display: none;
   }}
+}}
+@media (max-width: 1023px) {{
   .ilp-nav-links.ilp-nav-open {{
     display: flex;
     flex-direction: column;
+    align-items: stretch;
     position: absolute;
-    top: 100%;
+    top: 4rem;
     left: 0;
     right: 0;
     background: {PAPER};
     padding: 1rem 1.25rem 1.25rem;
     border-bottom: 1px solid {HAIR};
-  }}
-  .ilp-nav-burger {{
-    display: inline-flex;
   }}
 }}
 .ilp-section {{
