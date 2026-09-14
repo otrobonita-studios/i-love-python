@@ -52,28 +52,27 @@ def _render_artifact(
         ui.column().classes("w-full gap-2 rounded border border-gray-200 bg-gray-50 p-3"),
     ):
         with ui.row().classes("items-center gap-2 flex-wrap w-full"):
-            ui.label("generated/k6/load.js").classes("font-mono text-xs font-semibold")
-            ui.label("compiled by Python · do not edit").classes("text-[10px] text-gray-400")
+            ui.label("generated/k6/load.js").classes("font-mono text-base font-semibold")
+            ui.label("compiled by Python · do not edit").classes("text-base text-gray-400")
             if problems:
                 ui.label("structural fail").classes(
-                    "text-[10px] uppercase tracking-wide rounded px-1.5 py-0.5 "
-                    "bg-red-50 text-red-800"
+                    "text-base uppercase tracking-wide rounded px-1.5 py-0.5 bg-red-50 text-red-800"
                 )
             else:
                 ui.label("structural OK").classes(
-                    "text-[10px] uppercase tracking-wide rounded px-1.5 py-0.5 "
+                    "text-base uppercase tracking-wide rounded px-1.5 py-0.5 "
                     "bg-green-50 text-green-800"
                 )
             node_style = "bg-green-50 text-green-800" if node_ok else "bg-amber-50 text-amber-800"
             ui.label(f"node --check: {node_detail}").classes(
-                f"text-[10px] rounded px-1.5 py-0.5 {node_style}"
+                f"text-base rounded px-1.5 py-0.5 {node_style}"
             )
-        ui.label(preview).classes("font-mono text-[11px] text-gray-600 whitespace-pre-wrap")
+        ui.label(preview).classes("font-mono text-base text-gray-600 whitespace-pre-wrap")
         if problems:
             for problem in problems:
-                ui.label(problem).classes("text-xs text-red-700")
+                ui.label(problem).classes("text-base text-red-700")
         with ui.expansion("full compiled script").classes("w-full"):
-            ui.code(js, language="javascript").classes("w-full text-xs max-h-64 overflow-auto")
+            ui.code(js, language="javascript").classes("w-full text-base max-h-64 overflow-auto")
 
 
 def _render_stats(result: report.LoadReport, target: ui.column) -> None:
@@ -89,52 +88,64 @@ def _render_stats(result: report.LoadReport, target: ui.column) -> None:
                 ("max", f"{result.max_ms:.1f} ms"),
             ):
                 with ui.card().classes("p-3 gap-0.5 min-w-24"):
-                    ui.label(label).classes("text-[10px] uppercase text-gray-400")
+                    ui.label(label).classes("text-base uppercase text-gray-400")
                     ui.label(value).classes("text-lg font-bold")
         with ui.row().classes("items-center gap-2"):
-            ui.icon("science").classes("text-sm text-gray-400")
+            ui.icon("science", size="1.25rem").classes("text-gray-400")
             source_note = {
                 "python simulator": "real HTTP from this process against this server",
                 "offline fixture": "deterministic, no network — not a live run",
                 "k6": "the k6 binary hitting this server",
             }.get(result.source, "labelled so the origin is never implied")
-            ui.label(f"source: {result.source} — {source_note}").classes("text-xs text-gray-500")
+            ui.label(f"source: {result.source} — {source_note}").classes("text-base text-gray-500")
         if result.series:
             points = list(result.series)
             ui.echart(
                 {
+                    "legend": {"data": ["avg ms", "VUs"]},
                     "xAxis": {"type": "category", "data": [f"{p.t_s:.0f}s" for p in points]},
-                    "yAxis": {"type": "value", "name": "ms"},
+                    "yAxis": [
+                        {"type": "value", "name": "ms"},
+                        {"type": "value", "name": "VUs", "splitLine": {"show": False}},
+                    ],
                     "series": [
                         {
+                            "name": "avg ms",
                             "type": "line",
                             "smooth": True,
                             "data": [round(p.avg_ms, 1) for p in points],
-                        }
+                            "markLine": {
+                                "data": [
+                                    {"yAxis": round(result.p95_ms, 1), "name": "p95"},
+                                ]
+                            },
+                        },
+                        {
+                            "name": "VUs",
+                            "type": "line",
+                            "yAxisIndex": 1,
+                            "data": [p.vus for p in points],
+                        },
                     ],
                     "tooltip": {"trigger": "axis"},
                 }
-            ).classes("w-full h-48")
-            ui.label("avg response time (ms) over time - one point per second of the run").classes(
-                "text-[10px] text-gray-400"
-            )
+            ).classes("w-full h-56")
+            ui.label(
+                "Avg latency (ms) and virtual users, one point per second. "
+                "The dashed mark is measured p95."
+            ).classes("text-base text-gray-500")
 
 
 def build_loadtest_tab() -> None:
     """Build the Load Test tab."""
     with ui.card().classes("w-full p-4 gap-3"):
         with ui.row().classes("items-center gap-2"):
-            ui.icon("speed").classes("text-2xl")
+            ui.icon("speed", size="1.5rem")
             ui.label("Load test").classes("text-lg font-bold")
         ui.label(
-            "A Python dataclass is the source of truth. Python compiles it to k6 JavaScript "
-            "(a generated artifact — do not edit the JS). Then either hit this server for "
-            "real, or play a labelled offline fixture. The chart always names its source."
-        ).classes("text-sm text-gray-600 leading-relaxed")
-        ui.label(
-            "Defaults are small on purpose: a handful of virtual users against /api/health, "
-            "a few seconds. This is a demo of the loop, not a soak test."
-        ).classes("text-sm text-gray-600 leading-relaxed")
+            "A Python LoadSpec compiles to k6 JavaScript and hits /api/health. Real k6 "
+            "if installed, a labelled Python simulator if not. The chart names its source."
+        ).classes("ilp-lede")
 
         with ui.grid(columns=6).classes("w-full gap-2 items-end"):
             vus = ui.number("VUs", value=4, min=1, max=64).props("dense outlined")
@@ -175,7 +186,7 @@ def build_loadtest_tab() -> None:
                 ui.spinner(size="lg")
                 ui.label(
                     f"Running a real load test against {make_spec().target_url} - a few seconds..."
-                ).classes("text-xs")
+                ).classes("text-base")
             spec = make_spec()
             ndjson = await run.io_bound(simulator.http_simulate, spec)
             if ndjson is None:
@@ -183,7 +194,7 @@ def build_loadtest_tab() -> None:
                 with results:
                     ui.label(
                         "The load test was cancelled or returned no data - nothing to chart."
-                    ).classes("text-xs text-amber-300")
+                    ).classes("text-base text-amber-800")
                 return
             _render_stats(report.parse_ndjson(ndjson, source="python simulator"), results)
 

@@ -28,12 +28,12 @@ TOOL_GLOSSARY = (
 def _glossary() -> None:
     with ui.card().classes("w-full p-4 gap-3"):
         with ui.row().classes("items-center gap-2"):
-            ui.icon("menu_book").classes("text-2xl")
+            ui.icon("menu_book", size="1.5rem")
             ui.label("What each tool actually does").classes("text-lg font-bold")
         for name, what in TOOL_GLOSSARY:
             with ui.row().classes("items-start gap-3 w-full"):
-                ui.label(name).classes("w-32 shrink-0 font-mono text-xs font-bold")
-                ui.label(what).classes("text-xs text-gray-600")
+                ui.label(name).classes("w-40 shrink-0 font-mono text-base font-bold")
+                ui.label(what).classes("text-base text-gray-600")
 
 
 def _explanation_lines(report: telemetry.TelemetryReport) -> list[str]:
@@ -55,7 +55,7 @@ async def _show_latest_quality(content: ui.column) -> None:
     content.clear()
     with content:
         ui.spinner(size="md")
-        ui.label("Reading the latest quality report (or running one fresh)...").classes("text-xs")
+        ui.label("Reading the latest quality report (or running one fresh)...").classes("text-base")
     cached = telemetry.load_report()
     if cached is not None:
         report: telemetry.TelemetryReport = cached
@@ -65,7 +65,7 @@ async def _show_latest_quality(content: ui.column) -> None:
             content.clear()
             with content:
                 ui.label("No cached report and the fresh run was cancelled.").classes(
-                    "text-xs text-amber-300"
+                    "text-base text-amber-800"
                 )
             return
         report = fresh
@@ -74,8 +74,8 @@ async def _show_latest_quality(content: ui.column) -> None:
     with content:
         for line in _explanation_lines(report):
             with ui.row().classes("gap-2 items-start"):
-                ui.icon("translate").classes("text-sm text-gray-400 mt-0.5")
-                ui.label(line).classes("text-xs")
+                ui.icon("translate", size="1.25rem").classes("text-gray-400 mt-0.5")
+                ui.label(line).classes("text-base")
 
 
 def _build_commit_explainer() -> None:
@@ -92,8 +92,8 @@ def _build_commit_explainer() -> None:
         with content:
             for bullet in explain_diff(diff):
                 with ui.row().classes("gap-2 items-start"):
-                    ui.icon("minimize").classes("text-sm text-gray-400 mt-0.5")
-                    ui.label(bullet).classes("text-xs")
+                    ui.icon("minimize", size="1.25rem").classes("text-gray-400 mt-0.5")
+                    ui.label(bullet).classes("text-base")
 
     ui.button("Explain this commit", on_click=explain_selected, icon="auto_awesome").props(
         "dense outline"
@@ -103,16 +103,20 @@ def _build_commit_explainer() -> None:
 
 def build_explain_tab() -> None:
     """Build the Explain tab."""
+    ui.label(
+        "Quality reports and commit diffs in plain English. Same data as those tabs "
+        "— legible, not re-measured."
+    ).classes("ilp-lede")
     _glossary()
     with ui.card().classes("w-full p-4 gap-3"):
         with ui.row().classes("items-center gap-2"):
-            ui.icon("translate").classes("text-2xl")
+            ui.icon("translate", size="1.5rem")
             ui.label("The quality run, in plain English").classes("text-lg font-bold")
         with ui.column().classes("w-full gap-2") as quality_content:
             pass
         ui.timer(0.6, lambda: _show_latest_quality(quality_content), once=True)
     with ui.card().classes("w-full p-4 gap-3"):
         with ui.row().classes("items-center gap-2"):
-            ui.icon("commit").classes("text-2xl")
+            ui.icon("commit", size="1.5rem")
             ui.label("Any commit, in plain English").classes("text-lg font-bold")
         _build_commit_explainer()
