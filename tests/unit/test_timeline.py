@@ -14,11 +14,14 @@ def test_real_timeline_parses_manifest_trailers() -> None:
     timeline = real_timeline()
     assert len(timeline) >= 5
     # Every commit this project authored carries a Manifest: trailer.
-    # (Inherited history like the initial commit and merges may not.)
+    # Inherited history (initial commit) and merge commits (git or GitHub)
+    # may not.
     authored = [
         e
         for e in timeline
-        if e.subject != "Initial commit" and not e.subject.startswith("Merge branch")
+        if e.subject != "Initial commit"
+        and not e.subject.startswith("Merge branch")
+        and not e.subject.startswith("Merge pull request")
     ]
     assert len(authored) >= 5
     assert all(e.manifest for e in authored)
