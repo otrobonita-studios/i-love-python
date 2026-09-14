@@ -1,6 +1,6 @@
 """Tests for art/theme.py (wiring-diagram tokens, no NiceGUI)."""
 
-from art.theme import FONT_HREF, LIGHT, font_links, root_css
+from art.theme import FONT_HREF, LIGHT, PAPER, font_links, root_css
 
 
 def test_light_palette_matches_the_wiring_diagram() -> None:
@@ -20,6 +20,10 @@ def test_root_css_emits_custom_properties_and_chrome() -> None:
     assert ".ilp-link" in css
     assert "IBM Plex Sans" in css
     assert "Archivo" in FONT_HREF
+    assert "Newsreader" in FONT_HREF
+    assert PAPER in css
+    assert ".ilp-letter" in css
+    assert "ilp-heart-beat 1.35s ease-in-out 1.9s 8 forwards" in css
     assert ".q-tab .q-tab__label" in css
     assert "Material Icons" in css
 
@@ -53,6 +57,7 @@ def test_font_links_load_plex_and_archivo() -> None:
     assert "fonts.googleapis.com" in html
     assert "IBM+Plex+Sans" in html
     assert "Archivo" in html
+    assert "Newsreader" in html
     assert FONT_HREF in html
 
 

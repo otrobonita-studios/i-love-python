@@ -5,7 +5,7 @@ from nicegui import ui
 from art import links as art_links
 from art import logo as art_logo
 from art import theme
-from art.heart import heart_points, to_svg
+from art.heart import heart_points, overlay_svg, to_svg
 
 HEART_POINTS = 240
 
@@ -34,6 +34,21 @@ def apply_theme() -> None:
 def render_logo(size: str = "h-10 w-10") -> None:
     """Draw the I ❤ PY wordmark. The SVG is generated in Python at runtime."""
     ui.html(art_logo.logo_svg()).classes(f"shrink-0 {size}")
+
+
+def render_lockup(size: str = "w-40") -> None:
+    """I + PY letters with the parametric heart overlaid (draw, 8 beats, stop)."""
+    with ui.element("div").classes(f"ilp-lockup {size}"):
+        ui.html(art_logo.letters_svg()).classes("ilp-letters")
+        overlay = ui.element("div").classes("ilp-heart-overlay")
+
+        def paint_heart() -> None:
+            overlay.clear()
+            with overlay:
+                ui.html(overlay_svg(heart_points(HEART_POINTS)))
+
+        paint_heart()
+        overlay.on("click", lambda _e: paint_heart())
 
 
 def render_chrome_links() -> None:

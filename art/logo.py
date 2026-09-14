@@ -102,6 +102,16 @@ P_COUNTER = Glyph(
 
 # Document order is paint order: the counter must stay last, on top of P.
 GLYPHS: tuple[Glyph, ...] = (HEART, LETTER_P, LETTER_Y, LETTER_I, P_COUNTER)
+# Landing lockup hides the Glaser heart; the parametric curve overlays it.
+LETTER_GLYPHS: tuple[Glyph, ...] = (LETTER_P, LETTER_Y, LETTER_I, P_COUNTER)
+
+
+def _svg_from(glyphs: tuple[Glyph, ...]) -> str:
+    paths = "".join(
+        f'<path d="{glyph.d}" fill="{glyph.fill}" transform="translate({glyph.x},{glyph.y})"/>'
+        for glyph in glyphs
+    )
+    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{VIEW_BOX}">{paths}</svg>'
 
 
 def logo_svg() -> str:
@@ -110,8 +120,9 @@ def logo_svg() -> str:
     Only a ``viewBox`` is emitted (no fixed width/height) so the
     embedding page controls the rendered size with CSS.
     """
-    paths = "".join(
-        f'<path d="{glyph.d}" fill="{glyph.fill}" transform="translate({glyph.x},{glyph.y})"/>'
-        for glyph in GLYPHS
-    )
-    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{VIEW_BOX}">{paths}</svg>'
+    return _svg_from(GLYPHS)
+
+
+def letters_svg() -> str:
+    """I and PY only — the landing overlays the parametric heart instead."""
+    return _svg_from(LETTER_GLYPHS)

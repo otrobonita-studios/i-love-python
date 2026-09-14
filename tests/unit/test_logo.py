@@ -39,6 +39,15 @@ def test_logo_is_deterministic() -> None:
     assert logo.logo_svg() == logo.logo_svg()
 
 
+def test_letters_svg_omits_the_glaser_heart() -> None:
+    svg = logo.letters_svg()
+    root = ET.fromstring(svg)
+    paths = root.findall(f"{SVG_NS}path")
+    assert len(paths) == 4
+    assert logo.HEART.fill not in svg
+    assert logo.logo_svg().count("<path") == 5
+
+
 def test_glyph_roster() -> None:
     fills = [glyph.fill for glyph in logo.GLYPHS]
     assert fills.count("#EE1C25") == 1  # exactly one heart
