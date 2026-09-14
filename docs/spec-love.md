@@ -310,3 +310,47 @@ diagram. Coverage floor stays 70%.
 - Trademark decision on I❤NY adjacency (`docs/spec.md` §1) — still an owner
   call, not this build.
 - mutmut, git bisect, black --check — still the open gaps in `docs/spec.md`.
+
+---
+
+## 9. Letter of introduction (the floor plan)
+
+A senior writing to a dear co-worker, introducing the architecture. Typeset
+like §2 (narrow measure, after the love letter's tone). Sits **above** the
+room cards, same `#map` section. Kicker: `A letter of introduction`. Title:
+`I would like you to meet the house.` Sign-off: `Yours, / Jesper / Otrobonita AI Labs`.
+
+Store as data in `explain/intro.py`. Do not paraphrase.
+
+Dear colleague —
+
+I am writing to introduce you to a house I have come to trust. I have lived in many codebases. Some of them were charming. Some of them were traps with good furniture. This one is neither a cathedral nor a studio apartment. It is a small house with six rooms and a rule so simple you can say it at the door: every request walks downstairs, and nobody skips a floor.
+
+The front door is the browser. Behind it sits a concierge — `app.py` — who only points. It does not cook. It does not argue. It does not keep secrets in its pockets.
+
+One floor down, the rooms are furnished by thin views — `render.py`. They lay the table. They do not do the math, they do not go outside, they do not decide what is true.
+
+Below that, the people who actually know things. Logic. Pure Python. You can ask them questions without starting the house, without the network, without a browser. That is how you know they are honest: they work in daylight.
+
+And at the cellar door: real tools. ruff, mypy, pytest, git, the load runner. Not portraits of tools. The tools themselves. If one is missing, the house says so. It will not pretend a pass.
+
+I recommend this arrangement without reservation, and I will tell you why: when something breaks, you know which floor to walk to. When someone new arrives, you can give them this letter instead of a week of folklore.
+
+The six rooms are enclosed below, so you are not lost. Landing is the first impression. Quality is the medical chart — you have already met the instruments. Explain is the friend who translates. Review is three colleagues who never quite agree. Git is how you ask the house about its own past. Load is Python writing a letter in another dialect, sending it out, and reading the reply — and always naming who spoke.
+
+One language built the house. Everything else is generated, headed, and named. That is not a slogan. It is the lock on the cellar door.
+
+Walk through. The rooms will introduce themselves.
+
+**Enclosed floor plan.** Heading: `Six rooms. One language. Nobody skips a floor.` The stack chips remain: browser → app.py → render.py → logic → real tools. Six room cards, in this order, each linking to its section:
+
+| # | Room | One line |
+|---|------|----------|
+| 01 | Landing | The first impression. A heart of sine and cosine, a wordmark Python owns. No clip-art in a drawer. |
+| 02 | Quality | The medical chart. Eight real instruments, read aloud. If one is missing, the house says so — never a fake pass. |
+| 03 | Explain | The friend who translates. What changed, why it matters, what could go wrong — in the language you already speak. No network. |
+| 04 | Review | Three colleagues who never quite agree. They read real diffs. The raw patch is one door away if you want to argue. |
+| 05 | Git | Ask the house about its own past. log, show, blame — a conversation, not decoration. Beside it, a hallway of how not to live. |
+| 06 | Load | Python writes a letter in another dialect, sends it out, and reads the reply. The speaker is always named. |
+
+Keep the file paths on the cards (`art/heart.py`, `panel/telemetry.py`, …). The letter explains; the cards point.
