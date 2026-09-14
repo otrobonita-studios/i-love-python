@@ -310,3 +310,216 @@ diagram. Coverage floor stays 70%.
 - Trademark decision on I❤NY adjacency (`docs/spec.md` §1) — still an owner
   call, not this build.
 - mutmut, git bisect, black --check — still the open gaps in `docs/spec.md`.
+
+---
+
+## 9. Letter of introduction (the floor plan)
+
+A senior writing to a dear co-worker, introducing the architecture. Typeset
+like §2 (narrow measure, after the love letter's tone). Sits **above** the
+room cards, same `#map` section. Kicker: `A letter of introduction`. Title:
+`I would like you to meet the house.` Sign-off: `Yours, / Jesper / Otrobonita AI Labs`.
+
+Store as data in `explain/intro.py`. Do not paraphrase.
+
+Dear colleague —
+
+I am writing to introduce you to a house I have come to trust. I have lived in many codebases. Some of them were charming. Some of them were traps with good furniture. This one is neither a cathedral nor a studio apartment. It is a small house with six rooms and a rule so simple you can say it at the door: every request walks downstairs, and nobody skips a floor.
+
+The front door is the browser. Behind it sits a concierge — `app.py` — who only points. It does not cook. It does not argue. It does not keep secrets in its pockets.
+
+One floor down, the rooms are furnished by thin views — `render.py`. They lay the table. They do not do the math, they do not go outside, they do not decide what is true.
+
+Below that, the people who actually know things. Logic. Pure Python. You can ask them questions without starting the house, without the network, without a browser. That is how you know they are honest: they work in daylight.
+
+And at the cellar door: real tools. ruff, mypy, pytest, git, the load runner. Not portraits of tools. The tools themselves. If one is missing, the house says so. It will not pretend a pass.
+
+I recommend this arrangement without reservation, and I will tell you why: when something breaks, you know which floor to walk to. When someone new arrives, you can give them this letter instead of a week of folklore.
+
+The six rooms are enclosed below, so you are not lost. Landing is the first impression. Quality is the medical chart — you have already met the instruments. Explain is the friend who translates. Review is three colleagues who never quite agree. Git is how you ask the house about its own past. Load is Python writing a letter in another dialect, sending it out, and reading the reply — and always naming who spoke.
+
+One language built the house. Everything else is generated, headed, and named. That is not a slogan. It is the lock on the cellar door.
+
+Walk through. The rooms will introduce themselves.
+
+**Enclosed floor plan.** Heading: `Six rooms. One language. Nobody skips a floor.` The stack chips remain: browser → app.py → render.py → logic → real tools. Six room cards, in this order, each linking to its section:
+
+| # | Room | One line |
+|---|------|----------|
+| 01 | Landing | The first impression. A heart of sine and cosine, a wordmark Python owns. No clip-art in a drawer. |
+| 02 | Quality | The medical chart. Eight real instruments, read aloud. If one is missing, the house says so — never a fake pass. |
+| 03 | Explain | The friend who translates. What changed, why it matters, what could go wrong — in the language you already speak. No network. |
+| 04 | Review | Three colleagues who never quite agree. They read real diffs. The raw patch is one door away if you want to argue. |
+| 05 | Git | Ask the house about its own past. log, show, blame — a conversation, not decoration. Beside it, a hallway of how not to live. |
+| 06 | Load | Python writes a letter in another dialect, sends it out, and reads the reply. The speaker is always named. |
+
+Keep the file paths on the cards (`art/heart.py`, `panel/telemetry.py`, …). The letter explains; the cards point.
+
+---
+
+## 10. Visual contract (the picture is the spec)
+
+A first implementation put the letter on the page and left NiceGUI's
+defaults in charge of the chrome. That is not the design. **Stop adding
+sections until landing + letter match this contract.** Copy is not the
+gap. The picture is.
+
+The React showcase was a preview of *this* picture, not a stack to port.
+Rebuild the look in NiceGUI. Do not copy JSX.
+
+### 10.1 What the screenshot got wrong
+
+| Implemented (pause this) | Picture (match this) |
+|---|---|
+| Gray document canvas, letter in a cream **card** | The **whole page is paper**. No card, no drop-shadow panel, no gray frame. |
+| Mark is a small header logo in a beige band | Mark is the **first viewport**: large lockup, centered, ~280–460px. |
+| Blue default links (`ui.link` / Quasar primary) | Ink `#161412`. Underline on hover. Heart red only for the heart and the primary button. |
+| "Read the letter" as a blue text link | Ink filled button, cream type, ~h-12, not a hyperlink styled as body text. |
+| Italic caption tucked under a small logo | Serif display caption under the large mark, then one muted sentence, then the equation in mono. |
+| `__init__ .py`, `package .json`, `npm  install` | One code token, underscores intact. **Do not Markdown the letter.** `_` is emphasis in Markdown and will split the names. |
+| Header band + letter card = two surfaces | One surface. Hero paper continues into the letter. |
+
+### 10.2 Tokens (no guessing)
+
+| Token | Value | Use |
+|---|---|---|
+| Paper | `#F4EEE4` | `body` background. The page. |
+| Surface | `#FBF7F0` | Cards **elsewhere** (quality, rooms). Never the letter. |
+| Surface 2 | `#EFE8DB` | The `>>> import this` well. |
+| Ink | `#161412` | Type, links, the primary button fill. |
+| Muted | `#6B645A` | Secondary sentences. |
+| Subtle | `#8A8378` | Kickers, equation, captions. |
+| Heart | `#EE1C25` | The parametric heart. Execute. Nothing else. |
+| Border | `rgba(22,20,18,0.06)` | Hairline on cards, not on the letter. |
+
+Typography: a real serif for display and body (Newsreader if you can
+self-host the files as generated/static assets; otherwise Palatino /
+Iowan / `ui-serif`). IBM Plex Mono or `ui-monospace` for kickers,
+commands, `>>>`, the equation. Never a default system UI sans for the
+letter.
+
+### 10.3 Landing (first viewport)
+
+```
+[small tracked kicker]  OTROBONITA AI LABS — JESPER KARLSSON
+[I ❤ PY lockup, large]
+[serif] Rendered by the code you're about to inspect.
+[muted] A Python app that proves its own quality — and, finally, looks like it means it.
+[mono, subtle, **clickable**] How Python thinks of its heart
+                             x = 16 sin³ t    y = 13 cos t − 5 cos 2t − 2 cos 3t − cos 4t
+[ink button] Read the letter
+[subtle] Click the heart to draw it again.
+```
+
+- Full viewport height. Centered. Paper grain optional, not required.
+- Wordmark from `art/logo.py` with the Glaser heart **hidden**. Overlay
+  the parametric heart (§1). Draw, fill, 8 beats, stop.
+- No row of blue links under the mark. Navigation is a **top menu**: tiny
+  I ❤ PY mark on the **left** (always home), section names in a row
+  (Letter, Curve, Quality, Explain, House, Review, Git, Load, Listen),
+  GitHub as an outline chip. **Not tabs.** The old NiceGUI tab strip is
+  gone. Not a marketing header of default `ui.link`s.
+
+### 10.4 Letter
+
+- Same paper. Centered column, **max-width 40rem (≤62ch)**. No `ui.card`.
+- Kicker tracked small-caps mono: `A LETTER, NOT A DASHBOARD`
+- Title: `For the love of the inaccessible` — display serif, ~2.5–3rem.
+- Body ~1.08rem / 1.7. Paragraph spacing, not first-line indent.
+- Inline code (`const`, `npm install`, `package.json`, `def`, `venv`,
+  `__init__.py`) via HTML `<code>` or NiceGUI elements that **do not
+  parse Markdown**. Snapshot-test that `"__init__.py"` appears as that
+  exact string in the rendered HTML.
+- `import this` row: well + Execute **outside**, same row (§3).
+- Sign-off is only on the house letter (§9), not here.
+
+### 10.5 CSS from Python
+
+NiceGUI defaults (Quasar primary blue, white page, card elevation) will
+win unless you override them. Emit CSS from Python (`ui.add_css` / a
+GENERATED stylesheet). Set:
+
+```css
+body { background: #F4EEE4; color: #161412; }
+a { color: #161412; text-decoration: none; }
+a:hover { text-decoration: underline; }
+```
+
+Kill the primary blue. If a control must be colored, it is ink or heart
+red — never `#1976D2`, never visited purple.
+
+Order of work is §11.4 (this section used to pause CLI; that pause is lifted
+once landing + letter match this contract).
+
+---
+
+## 11. Curve essay, the experiment, and the chrome we actually built
+
+Store copy in `art/curve_copy.py` (or `explain/curve.py`). **Do not paraphrase.**
+The same essay typesets on `#curve` and in the modal.
+
+### 11.1 Formula opens the lab
+
+The hero formula is a **button**, not dead type:
+
+```
+How Python thinks of its heart
+x = 16 sin³ t    y = 13 cos t − 5 cos 2t − 2 cos 3t − cos 4t
+```
+
+It opens a **modal** of the heart experiment (parametric heart, `t` slider,
+samples slider, live x/y). Native range inputs — **not** a widget whose
+pointer events die inside a dialog. If sliders break in the overlay, revert
+to native `<input type="range">`. `#curve` on the page still has the essay
++ the same lab (nav Curve still works).
+
+### 11.2 Essay (canonical)
+
+Python will draw you a whole interface without leaving the language. That is a real gift: one runtime, one voice, the browser as a guest. What it does not have is React’s ocean of libraries, or the ease of a component you install and forget.
+
+So you choose Python on purpose. When the UI is light. When a conversation does most of the work — a chat, a letter, a panel that tells the truth — and the page is a room for that, not an application. This heart is that kind of UI.
+
+You’ve seen I ❤ NY your whole life: a serif I, a fat red heart, two letters underneath. In 1977 a New York designer named Milton Glaser sketched it with a crayon in the back of a cab. The doodle outlived the man. Almost nobody can name him. Almost everybody can draw the mark.
+
+This one rhymes with it — I ❤ PY — but it is not a tracing and it is not clip-art. It is sampled from a closed parametric curve, the same function the tests lock down. Drag t. Watch the point walk the outline. Math you can feel — in the language that drew it. Python on a string!
+
+Links in that essay (public page — do **not** put the CLI notes below into this copy):
+
+| Phrase | Target |
+|---|---|
+| I ❤ NY | https://en.wikipedia.org/wiki/I_Love_New_York |
+| Milton Glaser | https://en.wikipedia.org/wiki/Milton_Glaser |
+
+Do **not** assume the reader knows Glaser. The mark is famous; the name is not. Introduce I ❤ NY first, then the man.
+
+### 11.3 Chrome this copy is describing (CLI only — not page copy)
+
+These two notes are **instructions to the coding agent**. They must not appear on the public page, in the modal, or in `curve_copy.py`.
+
+- The rooms used to be tabs. Lift them into a **top menu**: the mark on the left — I ❤ PY, always a way home — and Letter, Curve, Quality, House on the bar. Kill the Quasar tab strip.
+- The work lives in **cards**. Not a dashboard, not a dump of command output. Each card names the tool, says what it is in English, shows the actual run, and offers the docs. Nobody is assumed to already know ruff.
+
+On the page:
+
+1. **Top menu, not tabs.** Sticky bar. Mark 40px-class on the **left**,
+   sections as ink text (not Quasar tabs, not a blue link row). GitHub
+   outline chip on the right. Mobile: hamburger, same mark.
+2. **Cards with explanation.** Quality (and House rooms): name, kind,
+   command, a plain-English sentence (`guide.what`), this-run output, docs
+   link. Nobody is supposed to already know ruff. See §4.
+
+### 11.4 Order of work (replaces §10.6)
+
+The earlier pause (“do not add sections while the page is gray + blue”)
+is lifted **once landing + letter match §10**. Then, in order:
+
+1. §10 visual contract — paper page, large lockup, ink, unbroken `__init__.py`
+2. Top menu + mark left (this section). Kill the tab strip.
+3. Quality cards with glossary sentences + docs (§4)
+4. Formula button → modal lab; native sliders; this essay on `#curve` and in the modal
+5. `import this` execute outside the well (§3)
+6. House letter above the map (§9)
+7. Heart draw / 8 beats / 10px nudge (§1) if not done in step 1
+
+Manifest each commit: `docs/spec-love.md §N`.
+
