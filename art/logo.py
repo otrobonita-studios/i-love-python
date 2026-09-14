@@ -14,6 +14,7 @@ else.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 VIEW_BOX = "0 0 1254 1254"
@@ -90,7 +91,9 @@ LETTER_I = Glyph(
     y=187,
 )
 
-# P's counter (the hole in the bowl), painted off-white on top.
+# P's counter (the hole in the bowl). Geometry only — subtracted from
+# LETTER_P with fill-rule="evenodd" so whatever is behind shows through.
+# The fill field is unused; the original export painted this #FBFBFB on top.
 P_COUNTER = Glyph(
     d="M0,0 L48,0 L73,5 L88,13 L93,17 L101,28 L105,39 L107,49 L107,69 L103,82 L97,93 "
     "L88,103 L78,109 L64,114 L43,117 L-8,117 L-19,116 L-20,115 L-20,19 L-17,10 L-13,4 "
@@ -100,25 +103,45 @@ P_COUNTER = Glyph(
     y=735,
 )
 
-# Document order is paint order: the counter must stay last, on top of P.
-GLYPHS: tuple[Glyph, ...] = (HEART, LETTER_P, LETTER_Y, LETTER_I, P_COUNTER)
+GLYPHS: tuple[Glyph, ...] = (HEART, LETTER_P, LETTER_Y, LETTER_I)
 # Landing lockup hides the Glaser heart; the parametric curve overlays it.
-LETTER_GLYPHS: tuple[Glyph, ...] = (LETTER_P, LETTER_Y, LETTER_I, P_COUNTER)
+LETTER_GLYPHS: tuple[Glyph, ...] = (LETTER_P, LETTER_Y, LETTER_I)
+
+_POINT = re.compile(r"([ML])(-?\d+),(-?\d+)")
+
+
+def _offset_path(d: str, dx: int, dy: int) -> str:
+    """Translate every M/L coordinate pair in a polyline path."""
+
+    def _move(match: re.Match[str]) -> str:
+        return f"{match.group(1)}{int(match.group(2)) + dx},{int(match.group(3)) + dy}"
+
+    return _POINT.sub(_move, d)
+
+
+def _p_with_hole() -> str:
+    """LETTER_P outline plus the counter, in P-local space, evenodd-cut."""
+    dx = P_COUNTER.x - LETTER_P.x
+    dy = P_COUNTER.y - LETTER_P.y
+    return f"{LETTER_P.d} {_offset_path(P_COUNTER.d, dx, dy)}"
+
+
+def _path_el(glyph: Glyph) -> str:
+    if glyph is LETTER_P:
+        return (
+            f'<path d="{_p_with_hole()}" fill="{glyph.fill}" fill-rule="evenodd" '
+            f'transform="translate({glyph.x},{glyph.y})"/>'
+        )
+    return f'<path d="{glyph.d}" fill="{glyph.fill}" transform="translate({glyph.x},{glyph.y})"/>'
 
 
 def _svg_from(
     glyphs: tuple[Glyph, ...],
     *,
     extra: str = "",
-    counter_fill: str | None = None,
     title: str | None = None,
 ) -> str:
-    paths = "".join(
-        f'<path d="{glyph.d}" fill="'
-        f'{counter_fill if counter_fill is not None and glyph is P_COUNTER else glyph.fill}"'
-        f' transform="translate({glyph.x},{glyph.y})"/>'
-        for glyph in glyphs
-    )
+    paths = "".join(_path_el(glyph) for glyph in glyphs)
     title_el = f"<title>{title}</title>" if title else ""
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{VIEW_BOX}"{extra}>'
@@ -141,10 +164,9 @@ def letters_svg() -> str:
 
 
 def nav_mark_svg() -> str:
-    """40px header mark: full wordmark, Glaser heart included, P-hole is paper."""
+    """40px header mark: full wordmark, Glaser heart included, P-hole is cut out."""
     return _svg_from(
         GLYPHS,
         extra=' class="block" role="img" aria-label="I love PY"',
-        counter_fill="var(--color-surface)",
         title="I love PY",
     )
