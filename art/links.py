@@ -33,6 +33,19 @@ def wiring_diagram_file() -> Path:
     return WIRING_FILE
 
 
+NAV_ITEMS: tuple[tuple[str, str], ...] = (
+    ("Letter", "#letter"),
+    ("Curve", "#curve"),
+    ("Quality", "#quality"),
+    ("Explain", "#explain"),
+    ("House", "#house"),
+    ("Review", "#review"),
+    ("Git", "#git"),
+    ("Load", "#load"),
+    ("Listen", "#listen"),
+)
+
+
 def chrome_links() -> tuple[ChromeLink, ...]:
     """The three links the chrome always shows, in display order."""
     return (

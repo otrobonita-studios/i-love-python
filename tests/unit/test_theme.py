@@ -14,11 +14,11 @@ def test_root_css_emits_custom_properties_and_chrome() -> None:
     css = root_css()
     assert "--ink: #14171f" in css
     assert "--accent: #3552d6" in css
-    assert ".ilp-landing" in css
+    assert ".ilp-hero" in css
     assert ".ilp-caption" in css
     assert ".ilp-links" in css
     assert ".ilp-link" in css
-    assert "IBM Plex Sans" in css
+    assert "IBM Plex Mono" in css
     assert "Archivo" in FONT_HREF
     assert "Newsreader" in FONT_HREF
     assert PAPER in css
@@ -49,7 +49,9 @@ def test_material_icons_use_ligature_metrics_not_flex_boxes() -> None:
     assert "max-width: 1em !important" in css
     assert ".q-icon.material-icons::before" in css
     assert "content: none !important" in css
-    assert "display: inline-flex" not in css
+    icon_block = css.split(".q-icon,", 1)[1].split(".q-icon.material-icons::before", 1)[0]
+    assert "inline-block" in icon_block
+    assert "inline-flex" not in icon_block
 
 
 def test_font_links_load_plex_and_archivo() -> None:

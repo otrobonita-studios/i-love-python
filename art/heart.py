@@ -111,6 +111,22 @@ def overlay_svg(points: list[HeartPoint], *, scale: float = 12.0) -> str:
     )
 
 
+def lab_svg(points: list[HeartPoint], t: float, *, scale: float = 12.0) -> str:
+    """Curve plus the point at t — for the heart experiment."""
+    if not points:
+        return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"></svg>'
+    proj = project(points, scale=scale)
+    path = svg_path(points, scale=proj.scale, origin_x=proj.origin_x, origin_y=proj.origin_y)
+    px, py = proj.xy(heart_point(t))
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {proj.width:.2f} {proj.height:.2f}" '
+        f'class="ilp-lab-svg" role="img" aria-label="parametric heart experiment">'
+        f'<path d="{path}" fill="none" stroke="{HEART_RED}" stroke-width="2"/>'
+        f'<circle cx="{px:.2f}" cy="{py:.2f}" r="5" fill="{HEART_RED}"/>'
+        f"</svg>"
+    )
+
+
 def to_svg(
     points: list[HeartPoint],
     scale: float = 12.0,

@@ -27,6 +27,43 @@ TOOL_MENTIONS = (
     "bandit",
 )
 
+
+def typeset_html(text: str, *, link_tools: bool = False) -> str:
+    """HTML for one paragraph. No Markdown — underscores in __init__.py stay."""
+    import re
+    from html import escape
+
+    from explain import glossary
+
+    tokens: list[tuple[str, str]] = [
+        (
+            "NumPy",
+            f'<a class="ilp-link" href="{NUMPY_HREF}" target="_blank" '
+            f'rel="noopener noreferrer">NumPy</a>',
+        ),
+        (
+            "SciPy",
+            f'<a class="ilp-link" href="{SCIPY_HREF}" target="_blank" '
+            f'rel="noopener noreferrer">SciPy</a>',
+        ),
+    ]
+    if link_tools:
+        for mention, tool_name in glossary.MENTION_TO_TOOL.items():
+            href = f"#{glossary.tool_anchor(tool_name)}"
+            tokens.append((mention, f'<a class="ilp-link" href="{href}">{escape(mention)}</a>'))
+    for word in INLINE_CODE:
+        tokens.append((word, f'<code class="ilp-code">{escape(word)}</code>'))
+    tokens.sort(key=lambda item: len(item[0]), reverse=True)
+    pattern = "(" + "|".join(re.escape(word) for word, _ in tokens) + ")"
+    repl = dict(tokens)
+    out: list[str] = []
+    for part in re.split(pattern, text):
+        if not part:
+            continue
+        out.append(repl[part] if part in repl else escape(part))
+    return "".join(out)
+
+
 PARAGRAPHS: tuple[str, ...] = (
     "I guess everyone has been there. A potential love affair across the room, seemingly impossible to reach, or even to get a short talk with. Is that feeling the first sign of something true, or just the pull of what won't come close?",
     "I tried. But the outfit was hard to read, and that made the whole thing harder still. Or was it only playing hard to catch? This species had simply renamed everything I knew. No const, no npm install, no package.json. Instead: def, venv, __init__.py, and whitespace that means something. Not by intent, but by indentation.",

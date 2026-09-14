@@ -52,11 +52,17 @@ FONT_HREF = (
     "&display=swap"
 )
 
-# Landing / letter paper (docs/spec-love.md §1.5). App chrome stays LIGHT.
+# Page tokens from docs/spec-love.md §10.2. LIGHT stays the wiring-diagram palette.
 PAPER = "#F4EEE4"
-LETTER_SURFACE = "#FBF7F0"
-LETTER_INK = "#161412"
+SURFACE = "#FBF7F0"
+SURFACE_2 = "#EFE8DB"
+INK = "#161412"
+MUTED = "#6B645A"
+SUBTLE = "#8A8378"
 HEART_RED = "#EE1C25"
+HAIR = "rgba(22,20,18,0.06)"
+LETTER_SURFACE = SURFACE
+LETTER_INK = INK
 
 
 def font_links() -> str:
@@ -87,21 +93,90 @@ def root_css(palette: Palette = LIGHT) -> str:
   --accent-2-soft: {p.accent_2_soft};
 }}
 html, body, #app, .q-layout, .q-page, .nicegui-content {{
-  background: var(--bg) !important;
-  color: var(--ink);
-  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  background: {PAPER} !important;
+  color: {INK} !important;
+  font-family: Newsreader, Palatino, "Palatino Linotype", "Iowan Old Style", ui-serif, serif;
 }}
-.ilp-landing {{
-  padding: 2.5rem 1.5rem 1.25rem;
-  gap: 0.5rem;
-  border-bottom: 1px solid var(--line);
-  background: {PAPER};
+a, a.ilp-link, .nicegui-link {{
+  color: {INK} !important;
+  text-decoration: none;
+}}
+a:hover, a.ilp-link:hover, .nicegui-link:hover {{
+  color: {INK} !important;
+  text-decoration: underline;
+}}
+.ilp-hero {{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.85rem;
+  padding: 5.5rem 1.5rem 3rem;
+  background: transparent;
+  border: none;
+}}
+.ilp-studio-kicker {{
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  color: {SUBTLE};
+  margin: 0 0 1.25rem;
 }}
 .ilp-caption {{
-  font-style: italic;
-  color: var(--ink-soft);
+  font-style: normal;
+  font-family: Newsreader, Palatino, "Palatino Linotype", ui-serif, serif;
+  color: {INK};
+  font-size: 1.65rem;
+  line-height: 1.3;
+  margin: 1.25rem 0 0;
+  max-width: 22em;
+}}
+.ilp-muted {{
+  color: {MUTED};
   font-size: 1.125rem;
-  margin: 0;
+  line-height: 1.5;
+  max-width: 28em;
+  margin: 0.25rem 0 0;
+}}
+.ilp-formula {{
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  color: {SUBTLE};
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.45;
+  margin: 1rem 0 0.5rem;
+  padding: 0;
+}}
+.ilp-formula:hover {{
+  text-decoration: underline;
+}}
+.ilp-btn-ink {{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  padding: 0 1.4rem;
+  margin-top: 0.75rem;
+  background: {INK} !important;
+  color: {PAPER} !important;
+  border-radius: 8px;
+  text-decoration: none !important;
+  font-family: Newsreader, Palatino, ui-serif, serif;
+  font-size: 1.05rem;
+}}
+.ilp-btn-ink:hover {{
+  text-decoration: none !important;
+  opacity: 0.92;
+}}
+.ilp-click-hint {{
+  color: {SUBTLE};
+  font-size: 1rem;
+  margin: 0.4rem 0 0;
 }}
 .ilp-tagline {{
   font-family: "IBM Plex Mono", ui-monospace, monospace;
@@ -206,9 +281,9 @@ html, body, #app, .q-layout, .q-page, .nicegui-content {{
   height: 0 !important;
 }}
 .q-card {{
-  background: var(--surface) !important;
+  background: {SURFACE} !important;
   box-shadow: none !important;
-  border: 1px solid var(--line) !important;
+  border: 1px solid {HAIR} !important;
   border-radius: 10px !important;
 }}
 .q-tab-panels {{
@@ -260,7 +335,9 @@ html, body, #app, .q-layout, .q-page, .nicegui-content {{
 }}
 .ilp-lockup {{
   position: relative;
-  width: 10rem;
+  width: min(26rem, 78vw);
+  max-width: 460px;
+  min-width: 280px;
   aspect-ratio: 1;
 }}
 .ilp-letters {{
@@ -312,35 +389,37 @@ html, body, #app, .q-layout, .q-page, .nicegui-content {{
 }}
 .ilp-letter {{
   width: 100%;
-  max-width: 62ch;
+  max-width: 40rem;
   margin: 0 auto;
-  padding: 2rem 1.5rem 2.5rem;
-  background: {LETTER_SURFACE};
-  color: {LETTER_INK};
-  font-family: Newsreader, Palatino, "Palatino Linotype", "Iowan Old Style", serif;
+  padding: 3rem 1.5rem 4rem;
+  background: transparent;
+  color: {INK};
+  font-family: Newsreader, Palatino, "Palatino Linotype", "Iowan Old Style", ui-serif, serif;
   font-size: 1.08rem;
   line-height: 1.7;
 }}
 .ilp-letter-kicker {{
   font-family: "IBM Plex Mono", ui-monospace, monospace;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  font-size: 1rem;
-  color: var(--ink-soft);
+  font-size: 0.9rem;
+  color: {SUBTLE};
   margin: 0 0 0.5rem;
 }}
 .ilp-letter-title {{
-  font-family: Newsreader, Palatino, "Palatino Linotype", serif;
-  font-size: 2rem;
+  font-family: Newsreader, Palatino, "Palatino Linotype", ui-serif, serif;
+  font-size: 2.6rem;
   font-weight: 600;
-  margin: 0 0 1.25rem;
+  line-height: 1.15;
+  margin: 0 0 1.5rem;
 }}
 .ilp-letter p {{
   margin: 0 0 1em;
 }}
-.ilp-letter code {{
+.ilp-code {{
   font-family: "IBM Plex Mono", ui-monospace, monospace;
   font-size: 0.95em;
+  white-space: nowrap;
 }}
 .ilp-this-row {{
   display: flex;
@@ -353,13 +432,15 @@ html, body, #app, .q-layout, .q-page, .nicegui-content {{
   flex: 1 1 auto;
   min-width: 0;
   font-family: "IBM Plex Mono", ui-monospace, monospace;
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: {SURFACE_2};
+  border: 1px solid {HAIR};
   border-radius: 8px;
   padding: 0.65rem 1rem;
 }}
 .ilp-this-row .q-btn {{
   flex: 0 0 auto;
+  background: {HEART_RED} !important;
+  color: #fff !important;
 }}
 .ilp-zen-out {{
   font-family: "IBM Plex Mono", ui-monospace, monospace;
@@ -376,6 +457,92 @@ html, body, #app, .q-layout, .q-page, .nicegui-content {{
 }}
 .ilp-kind {{
   font-family: "IBM Plex Mono", ui-monospace, monospace;
-  color: var(--ink-soft);
+  color: {MUTED};
+}}
+.ilp-nav {{
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 1.25rem;
+  background: {PAPER};
+  border-bottom: 1px solid {HAIR};
+}}
+.ilp-nav .ilp-lockup {{
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+}}
+.ilp-nav .ilp-heart, .ilp-nav .ilp-heart-path {{
+  animation: none;
+}}
+.ilp-nav .ilp-heart-path {{
+  fill-opacity: 1;
+  stroke-dashoffset: 0;
+}}
+.ilp-nav-links {{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 1.1rem;
+  flex: 1;
+  font-family: Newsreader, Palatino, ui-serif, serif;
+}}
+.ilp-nav-item {{
+  color: {INK} !important;
+  text-decoration: none !important;
+  font-size: 1.05rem;
+}}
+.ilp-nav-item:hover {{
+  text-decoration: underline !important;
+}}
+.ilp-nav-github {{
+  border: 1px solid {INK};
+  border-radius: 8px;
+  padding: 0.35rem 0.85rem;
+  color: {INK} !important;
+  text-decoration: none !important;
+  font-family: Newsreader, Palatino, ui-serif, serif;
+}}
+.ilp-nav-github:hover {{
+  text-decoration: none !important;
+  background: {INK};
+  color: {PAPER} !important;
+}}
+.ilp-nav-burger {{
+  display: none;
+  margin-left: auto;
+}}
+@media (max-width: 900px) {{
+  .ilp-nav-links {{
+    display: none;
+  }}
+  .ilp-nav-links.ilp-nav-open {{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: {PAPER};
+    padding: 1rem 1.25rem 1.25rem;
+    border-bottom: 1px solid {HAIR};
+  }}
+  .ilp-nav-burger {{
+    display: inline-flex;
+  }}
+}}
+.ilp-section {{
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+}}
+.ilp-q-card {{
+  background: {SURFACE} !important;
+  border: 1px solid {HAIR} !important;
+  box-shadow: none !important;
 }}
 """
