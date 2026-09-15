@@ -156,8 +156,9 @@ The reused love letter is the one that already shipped with the language.
 
 - Code well on the left. **Execute is outside the well**, same row, right.
 - Never inside the chip. Never stacked under it at any breakpoint.
-- Play icon is a filled triangle, not a chevron or `>`. After the first run
-  the label becomes **Again** (rotate icon acceptable).
+- Play icon is a filled triangle, not a chevron or `>`. After Execute the
+  label becomes **Hide**. Hide removes the Zen card (the whole well) and
+  the button becomes **Execute** again.
 - Row does not wrap. Code well `flex: 1; min-width: 0`. Button does not shrink.
 
 ### 3.2 Output
@@ -175,11 +176,6 @@ zen = codecs.decode(this_mod.s, "rot_13")
 
 Tests: the decoded string starts with `The Zen of Python, by Tim Peters` and
 contains `Readability counts.` and `Namespaces are one honking great idea`.
-
-Caption under the output, after run:
-
-> this.py — the letter that shipped with the language. Rot13 in the source,
-> plain English on the way out.
 
 Idle caption:
 
@@ -292,7 +288,8 @@ diagram. Coverage floor stays 70%.
       nudged ~10px right of the I.
 - [ ] Letter text matches §2.2. Voice not rewritten.
 - [ ] `>>> import this` Execute sits outside the code well, same row, play
-      icon. Output is decoded `this.s`, not typed English.
+      icon. Hide puts the Zen card away and restores Execute. Output is
+      decoded `this.s`, not typed English.
 - [ ] Each of the eight tools has a what-sentence and a docs link on the card.
 - [ ] pytest and lang-audit failures still show as failures.
 - [ ] `scripts/lang_audit.py` still exits 0. No new hand-authored JS/CSS/sh.
@@ -405,17 +402,19 @@ letter.
 [I ❤ PY lockup, large]
 [serif] Rendered by the code you're about to inspect.
 [muted] A Python app that proves its own quality — and, finally, looks like it means it.
-[mono, subtle] x = 16 sin³ t    y = 13 cos t − 5 cos 2t − 2 cos 3t − cos 4t
+[mono, subtle, **clickable**] How Python thinks of its heart
+                             x = 16 sin³ t    y = 13 cos t − 5 cos 2t − 2 cos 3t − cos 4t
 [ink button] Read the letter
-[subtle] Click the heart to draw it again.
 ```
 
 - Full viewport height. Centered. Paper grain optional, not required.
 - Wordmark from `art/logo.py` with the Glaser heart **hidden**. Overlay
   the parametric heart (§1). Draw, fill, 8 beats, stop.
-- No row of blue links under the mark. Navigation is a small top bar
-  (tiny wordmark left, ink section names, GitHub as an outline chip) or
-  it comes after the letter. Not a marketing header of `ui.link`s.
+- No row of blue links under the mark. Navigation is a **top menu**: tiny
+  I ❤ PY mark on the **left** (always home), section names in a row
+  (Letter, Curve, Quality, Explain, House, Review, Git, Load, Listen),
+  GitHub as an outline chip. **Not tabs.** The old NiceGUI tab strip is
+  gone. Not a marketing header of default `ui.link`s.
 
 ### 10.4 Letter
 
@@ -445,14 +444,78 @@ a:hover { text-decoration: underline; }
 Kill the primary blue. If a control must be colored, it is ink or heart
 red — never `#1976D2`, never visited purple.
 
-### 10.6 Order of work (CLI)
+Order of work is §11.4 (this section used to pause CLI; that pause is lifted
+once landing + letter match this contract).
 
-1. Visual contract on **landing + letter** (this section). Screenshot
-   against the design picture: paper page, large lockup, ink button,
-   unbroken `__init__.py`.
-2. Then `import this` execute (§3).
-3. Then glossary on quality cards (§4).
-4. Then the house letter above the map (§9).
-5. Heart draw / 8 beats / 10px nudge (§1) if not already done in step 1.
+---
 
-Do not start 2–4 while the page is still a gray canvas with blue links.
+## 11. Curve essay, the experiment, and the chrome we actually built
+
+Store copy in `art/curve_copy.py` (or `explain/curve.py`). **Do not paraphrase.**
+The same essay typesets on `#curve` and in the modal.
+
+### 11.1 Formula opens the lab
+
+The hero formula is a **button**, not dead type:
+
+```
+How Python thinks of its heart
+x = 16 sin³ t    y = 13 cos t − 5 cos 2t − 2 cos 3t − cos 4t
+```
+
+It opens a **modal** of the heart experiment (parametric heart, `t` slider,
+samples slider, live x/y). Native range inputs — **not** a widget whose
+pointer events die inside a dialog. If sliders break in the overlay, revert
+to native `<input type="range">`. `#curve` on the page still has the essay
++ the same lab (nav Curve still works).
+
+### 11.2 Essay (canonical)
+
+Python will draw you a whole interface without leaving the language. That is a real gift: one runtime, one voice, the browser as a guest. What it does not have is React’s ocean of libraries, or the ease of a component you install and forget.
+
+So you choose Python on purpose. When the UI is light. When a conversation does most of the work — a chat, a letter, a panel that tells the truth — and the page is a room for that, not an application. This heart is that kind of UI.
+
+You’ve seen I ❤ NY your whole life: a serif I, a fat red heart, two letters underneath. In 1977 a New York designer named Milton Glaser sketched it with a crayon in the back of a cab. The doodle outlived the man. Almost nobody can name him. Almost everybody can draw the mark.
+
+This one rhymes with it — I ❤ PY — but it is not a tracing and it is not clip-art. It is sampled from a closed parametric curve, the same function the tests lock down. Drag t. Watch the point walk the outline. Math you can feel — in the language that drew it. Python on a string!
+
+Links in that essay (public page — do **not** put the CLI notes below into this copy):
+
+| Phrase | Target |
+|---|---|
+| I ❤ NY | https://en.wikipedia.org/wiki/I_Love_New_York |
+| Milton Glaser | https://en.wikipedia.org/wiki/Milton_Glaser |
+
+Do **not** assume the reader knows Glaser. The mark is famous; the name is not. Introduce I ❤ NY first, then the man.
+
+### 11.3 Chrome this copy is describing (CLI only — not page copy)
+
+These two notes are **instructions to the coding agent**. They must not appear on the public page, in the modal, or in `curve_copy.py`.
+
+- The rooms used to be tabs. Lift them into a **top menu**: the mark on the left — I ❤ PY, always a way home — and Letter, Curve, Quality, House on the bar. Kill the Quasar tab strip.
+- The work lives in **cards**. Not a dashboard, not a dump of command output. Each card names the tool, says what it is in English, shows the actual run, and offers the docs. Nobody is assumed to already know ruff.
+
+On the page:
+
+1. **Top menu, not tabs.** Sticky bar. Mark 40px-class on the **left**,
+   sections as ink text (not Quasar tabs, not a blue link row). GitHub
+   outline chip on the right. Mobile: hamburger, same mark.
+2. **Cards with explanation.** Quality (and House rooms): name, kind,
+   command, a plain-English sentence (`guide.what`), this-run output, docs
+   link. Nobody is supposed to already know ruff. See §4.
+
+### 11.4 Order of work (replaces §10.6)
+
+The earlier pause (“do not add sections while the page is gray + blue”)
+is lifted **once landing + letter match §10**. Then, in order:
+
+1. §10 visual contract — paper page, large lockup, ink, unbroken `__init__.py`
+2. Top menu + mark left (this section). Kill the tab strip.
+3. Quality cards with glossary sentences + docs (§4)
+4. Formula button → modal lab; native sliders; this essay on `#curve` and in the modal
+5. `import this` execute outside the well (§3)
+6. House letter above the map (§9)
+7. Heart draw / 8 beats / 10px nudge (§1) if not done in step 1
+
+Manifest each commit: `docs/spec-love.md §N`.
+

@@ -75,6 +75,14 @@ def test_projection_contains_every_sampled_point() -> None:
     assert min(ys) >= proj.padding - 1e-9
 
 
+def test_lab_svg_marks_the_point_at_t() -> None:
+    from art.heart import lab_svg
+
+    svg = lab_svg(heart_points(64), 0.0)
+    assert "<circle" in svg
+    assert HEART_RED in svg
+
+
 def test_overlay_svg_uses_the_mark_red_and_a_containing_viewbox() -> None:
     svg = overlay_svg(heart_points(64))
     root = ET.fromstring(svg)

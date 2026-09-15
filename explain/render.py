@@ -7,9 +7,6 @@ The letter and field guide only typeset explain/letter.py and glossary.py.
 
 from __future__ import annotations
 
-import re
-from html import escape
-
 from nicegui import run, ui
 
 from explain import glossary, letter
@@ -19,63 +16,61 @@ from panel import telemetry
 from review import store
 
 
-def _markup(text: str, *, link_tools: bool = False) -> str:
-    """Escape copy and wrap the spec's inline code / docs / tool names."""
-    tokens: list[tuple[str, str]] = [
-        (
-            "NumPy",
-            f'<a class="ilp-link" href="{letter.NUMPY_HREF}" target="_blank" '
-            f'rel="noopener noreferrer">NumPy</a>',
-        ),
-        (
-            "SciPy",
-            f'<a class="ilp-link" href="{letter.SCIPY_HREF}" target="_blank" '
-            f'rel="noopener noreferrer">SciPy</a>',
-        ),
-    ]
-    if link_tools:
-        for mention, tool_name in glossary.MENTION_TO_TOOL.items():
-            href = f"#{glossary.tool_anchor(tool_name)}"
-            tokens.append((mention, f'<a class="ilp-link" href="{href}">{escape(mention)}</a>'))
-    for word in letter.INLINE_CODE:
-        tokens.append((word, f"<code>{escape(word)}</code>"))
-    tokens.sort(key=lambda item: len(item[0]), reverse=True)
-    pattern = "(" + "|".join(re.escape(word) for word, _ in tokens) + ")"
-    repl = dict(tokens)
-    out: list[str] = []
-    for part in re.split(pattern, text):
-        if not part:
-            continue
-        out.append(repl[part] if part in repl else escape(part))
-    return "".join(out)
-
-
 def _paragraph(text: str, *, link_tools: bool = False) -> None:
-    ui.html(f"<p>{_markup(text, link_tools=link_tools)}</p>", sanitize=False)
+    ui.html(f"<p>{letter.typeset_html(text, link_tools=link_tools)}</p>", sanitize=False)
 
 
 def _import_this() -> None:
     with ui.row().classes("ilp-this-row items-center gap-3 w-full"):
         with ui.element("div").classes("ilp-this-well"):
             ui.label(">>> import this").classes("ilp-mono")
-        btn = ui.button("Execute", icon="play_arrow")
+        btn = ui.button(zen_mod.EXECUTE_LABEL, icon="play_arrow")
     output = ui.column().classes("w-full gap-2")
     caption = ui.label(letter.IDLE_CAPTION).classes("ilp-this-caption")
+    shown = False
 
-    def run() -> None:
+    def toggle() -> None:
+        nonlocal shown
+        shown, label = zen_mod.after_press(shown)
+        btn.set_text(label)
         output.clear()
-        with output:
-            ui.label(zen_mod.zen_of_python()).classes("ilp-zen-out")
-        caption.set_text(letter.ZEN_CAPTION)
-        btn.set_text("Again")
-        btn.props("icon=replay")
+        if shown:
+            with output:
+                ui.label(zen_mod.zen_of_python()).classes("ilp-zen-out")
+            caption.set_visibility(False)
+            btn.props("icon=visibility_off")
+        else:
+            caption.set_text(letter.IDLE_CAPTION)
+            caption.set_visibility(True)
+            btn.props("icon=play_arrow")
 
-    btn.on_click(run)
+    btn.on_click(toggle)
+
+
+def build_intro() -> None:
+    """House letter of introduction above the room cards. Canonical copy."""
+    from explain import intro
+
+    with ui.element("section").classes("ilp-letter w-full"):
+        ui.label(intro.KICKER).classes("ilp-letter-kicker")
+        ui.label(intro.TITLE).classes("ilp-letter-title")
+        for paragraph in intro.PARAGRAPHS:
+            ui.html(f"<p>{intro.typeset_html(paragraph)}</p>", sanitize=False)
+        for line in intro.SIGN_OFF:
+            ui.label(line)
+        ui.label(intro.PLAN_HEADING).classes("ilp-letter-title")
+        ui.label(" → ".join(intro.STACK)).classes("ilp-mono")
+        with ui.element("div").classes("ilp-card-grid"):
+            for room in intro.ROOMS:
+                with ui.card().classes("p-6 gap-2"):
+                    ui.link(f"{room.number}  {room.name}", room.href).classes("ilp-nav-item")
+                    ui.label(room.line)
+                    ui.label(room.path).classes("ilp-mono")
 
 
 def build_letter() -> None:
     """Typeset the love letter and the import-this control. No paraphrasing."""
-    with ui.element("section").classes("ilp-letter w-full").props("id=ilp-letter"):
+    with ui.element("section").classes("ilp-letter w-full"):
         ui.label(letter.KICKER).classes("ilp-letter-kicker")
         ui.label(letter.TITLE).classes("ilp-letter-title")
         for paragraph in letter.PARAGRAPHS:

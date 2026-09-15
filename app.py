@@ -8,6 +8,8 @@ executed for real. Nothing is simulated; where something cannot run
 
 from nicegui import app, ui
 
+from art import favicon as art_favicon
+from art import links as art_links
 from art import render as art_render
 from explain import render as explain_render
 from git_discipline import render as git_render
@@ -28,39 +30,79 @@ panel_render.register_api()
 art_render.register_routes()
 
 
+def chrome() -> None:
+    """Shared shell: theme + top menu. Each view is its own route."""
+    art_render.apply_theme()
+    art_render.render_nav()
+
+
 @ui.page("/")
 def index() -> None:
-    art_render.apply_theme()
-    with ui.column().classes("w-full items-center ilp-landing"):
-        art_render.render_lockup(size="w-40")
-        ui.label("Rendered by the code you're about to inspect.").classes("ilp-caption")
-        ui.link("Read the letter", "#ilp-letter").classes("ilp-link")
-        art_render.render_chrome_links()
+    chrome()
+    art_render.render_hero()
+
+
+@ui.page("/letter")
+def letter_page() -> None:
+    chrome()
     explain_render.build_letter()
 
-    with ui.tabs().classes("w-full") as tabs:
-        quality_tab = ui.tab("Quality", icon="monitoring")
-        review_tab = ui.tab("Review", icon="groups")
-        explain_tab = ui.tab("Explain", icon="translate")
-        git_tab = ui.tab("Git discipline", icon="commit")
-        load_tab = ui.tab("Load test", icon="speed")
 
-    with ui.tab_panels(tabs, value=quality_tab).classes("w-full p-6"):
-        with ui.tab_panel(quality_tab):
-            panel_render.build_panel()
-        with ui.tab_panel(review_tab):
-            review_render.build_review()
-        with ui.tab_panel(explain_tab):
-            explain_render.build_explain_tab()
-        with ui.tab_panel(git_tab):
-            git_render.build_git_tab()
-        with ui.tab_panel(load_tab):
-            loadtest_render.build_loadtest_tab()
+@ui.page("/curve")
+def curve_page() -> None:
+    chrome()
+    art_render.render_curve_section()
 
-    with ui.footer().classes("items-center justify-center gap-3 py-3 flex-wrap"):
-        ui.label("Otrobonita AI Labs — Jesper Karlsson")
-        art_render.render_chrome_links()
-        ui.label("pure Python, no fakes").classes("ilp-mono")
+
+@ui.page("/quality")
+def quality_page() -> None:
+    chrome()
+    with ui.element("section").classes("ilp-section"):
+        panel_render.build_panel()
+
+
+@ui.page("/explain")
+def explain_page() -> None:
+    chrome()
+    with ui.element("section").classes("ilp-section"):
+        explain_render.build_explain_tab()
+
+
+@ui.page("/map")
+def house_page() -> None:
+    chrome()
+    explain_render.build_intro()
+
+
+@ui.page("/review")
+def review_page() -> None:
+    chrome()
+    with ui.element("section").classes("ilp-section"):
+        review_render.build_review()
+
+
+@ui.page("/git")
+def git_page() -> None:
+    chrome()
+    with ui.element("section").classes("ilp-section"):
+        git_render.build_git_tab()
+
+
+@ui.page("/load")
+def load_page() -> None:
+    chrome()
+    with ui.element("section").classes("ilp-section"):
+        loadtest_render.build_loadtest_tab()
+
+
+@ui.page("/listen")
+def listen_page() -> None:
+    chrome()
+    with ui.element("section").classes("ilp-letter"):
+        ui.label("Listen").classes("ilp-letter-title")
+        ui.link("Podcast", art_links.PODCAST_HREF, new_tab=True).classes("ilp-nav-item").props(
+            "rel=noopener noreferrer"
+        )
 
 
 ui.run(
@@ -69,4 +111,5 @@ ui.run(
     reload=False,
     show=False,
     uvicorn_logging_level="warning",
+    favicon=art_favicon.FAVICON_PATH,
 )

@@ -33,6 +33,27 @@ def test_letter_copy_matches_the_spec() -> None:
         assert paragraph in spec
 
 
+def test_typeset_does_not_markdown_dunder_init() -> None:
+    html = letter.typeset_html(letter.PARAGRAPHS[1])
+    assert "__init__.py" in html
+    assert "package.json" in html
+    assert "npm install" in html
+    assert "<code" in html
+    stripped = html.replace("__init__.py", "")
+    assert "_init_" not in stripped
+    closing = letter.typeset_html(letter.CLOSING, link_tools=True)
+    assert "/quality#tool-ruff-format" in closing
+
+
+def test_zen_button_toggles_hide_then_execute() -> None:
+    assert zen.after_press(False) == (True, zen.HIDE_LABEL)
+    assert zen.after_press(True) == (False, zen.EXECUTE_LABEL)
+    assert zen.EXECUTE_LABEL == "Execute"
+    assert zen.HIDE_LABEL == "Hide"
+    assert zen.HIDE_LABEL != "Again"
+    assert not hasattr(letter, "ZEN_CAPTION")
+
+
 def test_zen_is_decoded_from_cpython_this() -> None:
     text = zen.zen_of_python()
     assert text.startswith("The Zen of Python, by Tim Peters")

@@ -1,6 +1,6 @@
 """Tests for art/theme.py (wiring-diagram tokens, no NiceGUI)."""
 
-from art.theme import FONT_HREF, LIGHT, PAPER, font_links, root_css
+from art.theme import FONT_HREF, LIGHT, PAPER, SURFACE, font_links, root_css
 
 
 def test_light_palette_matches_the_wiring_diagram() -> None:
@@ -14,11 +14,17 @@ def test_root_css_emits_custom_properties_and_chrome() -> None:
     css = root_css()
     assert "--ink: #14171f" in css
     assert "--accent: #3552d6" in css
-    assert ".ilp-landing" in css
+    assert ".ilp-hero" in css
+    assert ".ilp-nav-inner" in css
+    hero = css.split(".ilp-hero {", 1)[1].split("}", 1)[0]
+    assert "width: 100%" in hero
+    assert "justify-content: center" not in hero
+    assert "padding: 2.5rem 1.5rem 3rem" in hero
+    assert "max-width: 72rem" in css.split(".ilp-nav-inner {", 1)[1].split("}", 1)[0]
     assert ".ilp-caption" in css
     assert ".ilp-links" in css
     assert ".ilp-link" in css
-    assert "IBM Plex Sans" in css
+    assert "IBM Plex Mono" in css
     assert "Archivo" in FONT_HREF
     assert "Newsreader" in FONT_HREF
     assert PAPER in css
@@ -49,7 +55,9 @@ def test_material_icons_use_ligature_metrics_not_flex_boxes() -> None:
     assert "max-width: 1em !important" in css
     assert ".q-icon.material-icons::before" in css
     assert "content: none !important" in css
-    assert "display: inline-flex" not in css
+    icon_block = css.split(".q-icon,", 1)[1].split(".q-icon.material-icons::before", 1)[0]
+    assert "inline-block" in icon_block
+    assert "inline-flex" not in icon_block
 
 
 def test_font_links_load_plex_and_archivo() -> None:
@@ -81,6 +89,30 @@ def test_console_step_uses_ink_on_paper() -> None:
     assert "color: var(--ink-soft)" in why
     assert "gray-300" not in css
     assert "sky-300" not in css
+
+
+def test_cards_are_surface_on_a_two_column_grid() -> None:
+    css = root_css()
+    card = css.split(".q-card {", 1)[1].split("}", 1)[0]
+    assert f"background: {SURFACE}" in card
+    assert "border-radius: 16px" in card
+    grid = css.split(".ilp-card-grid {", 1)[1].split("}", 1)[0]
+    assert "gap: 1.5rem" in grid
+    assert "grid-template-columns: 1fr" in grid
+    two_col = css.split("@media (min-width: 768px) {", 1)[1]
+    assert "repeat(2, minmax(0, 1fr))" in two_col.split("}", 1)[0]
+    assert "xl:grid-cols-4" not in css
+
+
+def test_zen_out_uses_paper_surface() -> None:
+    css = root_css()
+    zen = css.split(".ilp-zen-out {", 1)[1].split("}", 1)[0]
+    assert f"background: {SURFACE}" in zen
+    assert "background: var(--surface)" not in zen
+    assert "font-size: 13px" in zen
+    assert "padding: 1.75rem 1.5rem 1.5rem 1.5rem" in zen
+    assert "margin-top: 10px" in zen
+    assert "margin-bottom: 20px" in zen
 
 
 def test_css_is_deterministic() -> None:

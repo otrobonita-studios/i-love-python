@@ -6,6 +6,7 @@ import tomllib
 
 import scripts.wiring_diagram as diagram
 from art.links import (
+    NAV_ITEMS,
     PODCAST_HREF,
     REPO_HREF,
     ROOT,
@@ -28,6 +29,24 @@ def test_chrome_links_are_map_podcast_and_repo() -> None:
     hrefs = {link.href for link in links}
     assert hrefs == {WIRING_HREF, PODCAST_HREF, REPO_HREF}
     assert all(link.new_tab for link in links)
+
+
+def test_nav_items_are_sections_not_tabs() -> None:
+    labels = [name for name, _href in NAV_ITEMS]
+    assert labels == [
+        "Letter",
+        "Curve",
+        "Quality",
+        "Explain",
+        "House",
+        "Review",
+        "Git",
+        "Load",
+        "Listen",
+    ]
+    assert dict(NAV_ITEMS)["House"] == "/map"
+    assert all(href.startswith("/") for _name, href in NAV_ITEMS)
+    assert not any("#" in href for _name, href in NAV_ITEMS)
 
 
 def test_repo_url_matches_pyproject() -> None:
