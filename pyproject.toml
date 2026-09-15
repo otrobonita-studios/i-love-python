@@ -38,10 +38,11 @@ select = ["E", "F", "I", "UP", "B", "SIM", "C4", "RUF"]
 "art/theme.py" = ["E501"]
 # Canonical letter copy must stay one string per paragraph (docs/spec-love.md §2.2).
 "explain/letter.py" = ["E501"]
-"explain/intro.py" = ["E501"]
 # Canonical copy uses unicode minus and curly quotes from the spec.
 "art/curve_copy.py" = ["E501", "RUF001"]
 "art/hero_copy.py" = ["E501", "RUF001"]
+# Embedded template text: the downloadable standalone script's own source.
+"art/standalone_lab.py" = ["E501"]
 
 [tool.mypy]
 strict = true
@@ -64,6 +65,7 @@ omit = [
     "scripts/ci_yaml.py",
     "scripts/install_hooks.py",
     "scripts/wiring_diagram.py",
+    "art/standalone_lab.py",
 ]
 
 [tool.coverage.report]

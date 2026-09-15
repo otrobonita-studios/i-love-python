@@ -30,6 +30,7 @@ under `generated/` because a header cannot be inserted:
 | `.git/hooks/pre-commit` | `scripts/install_hooks.py` | starts with `# GENERATED` |
 | `generated/docs/wiring-diagram.html` | `scripts/wiring_diagram.py` | starts with `<!-- GENERATED` |
 | `generated/favicon/favicon.ico` | `art/favicon.py` | binary ICO — no text header possible; lives under `generated/` |
+| `generated/downloads/heart_curve.py` | `art/standalone_lab.py` | starts with `# GENERATED`; served at `/downloads/heart_curve.py`, linked from the download badge on `/curve` |
 
 Enforced by `python scripts/lang_audit.py` (fails CI and the pre-commit hook on
 any hand-authored non-Python source file).

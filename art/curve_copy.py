@@ -4,12 +4,17 @@ from __future__ import annotations
 
 NY_HREF = "https://en.wikipedia.org/wiki/I_Love_New_York"
 GLASER_HREF = "https://en.wikipedia.org/wiki/Milton_Glaser"
+ILP_HREF = "/"
 TITLE = "How Python thinks of its heart"
 FORMULA = "x = 16 sin³ t    y = 13 cos t − 5 cos 2t − 2 cos 3t − cos 4t"
 
 
 def typeset_html(text: str) -> str:
-    """Link I ❤ NY and Milton Glaser. No CLI notes."""
+    """Link I ❤ NY, I ❤ PY, and Milton Glaser. No CLI notes.
+
+    The heart glyph in each mark gets its own <span class="hart"> so the
+    accent color can land on just the heart, not the whole mark.
+    """
     import re
     from html import escape
 
@@ -22,7 +27,11 @@ def typeset_html(text: str) -> str:
         (
             "I ❤ NY",
             f'<a class="ilp-link" href="{NY_HREF}" target="_blank" '
-            f'rel="noopener noreferrer">I ❤ NY</a>',
+            f'rel="noopener noreferrer">I<span class="hart">❤</span>NY</a>',
+        ),
+        (
+            "I ❤ PY",
+            f'<a class="ilp-link" href="{ILP_HREF}">I<span class="hart">❤</span>PY</a>',
         ),
     )
     pattern = "(" + "|".join(re.escape(word) for word, _ in tokens) + ")"

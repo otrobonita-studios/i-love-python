@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parent.parent
 
 WIRING_FILE = ROOT / "generated" / "docs" / "wiring-diagram.html"
 WIRING_HREF = "/docs/wiring-diagram.html"
+STANDALONE_FILE = ROOT / "generated" / "downloads" / "heart_curve.py"
+STANDALONE_HREF = "/downloads/heart_curve.py"
 PODCAST_HREF = (
     "https://cdn-media.otrobonita.com/audio/podcasts/i-love-python/i-love-python-podcast.m4a"
 )
@@ -33,16 +35,20 @@ def wiring_diagram_file() -> Path:
     return WIRING_FILE
 
 
+def standalone_script_file() -> Path:
+    """Path of the downloadable heart-curve script. Missing means not generated."""
+    return STANDALONE_FILE
+
+
 NAV_ITEMS: tuple[tuple[str, str], ...] = (
     ("Letter", "/letter"),
-    ("Curve", "/curve"),
-    ("Quality", "/quality"),
+    ("Its heart", "/curve"),
+    ("Telemetry", "/quality"),
     ("Explain", "/explain"),
-    ("House", "/map"),
     ("Review", "/review"),
-    ("Git", "/git"),
+    ("Ask Git", "/git"),
     ("Load", "/load"),
-    ("Listen", "/listen"),
+    ("Podcasts", "/listen"),
 )
 
 

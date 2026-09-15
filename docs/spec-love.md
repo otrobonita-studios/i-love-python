@@ -252,7 +252,7 @@ mark + caption + “Read the letter”
   → (optional) parametric curve studio
   → quality telemetry with glossary (§4)
   → field guide
-  → existing map / review / git / load / podcast
+  → existing review / git / load / podcast
 ```
 
 Telemetry is no longer page one.
@@ -310,47 +310,18 @@ diagram. Coverage floor stays 70%.
 
 ---
 
-## 9. Letter of introduction (the floor plan)
+## 9. Letter of introduction (the floor plan) — REMOVED
 
-A senior writing to a dear co-worker, introducing the architecture. Typeset
-like §2 (narrow measure, after the love letter's tone). Sits **above** the
-room cards, same `#map` section. Kicker: `A letter of introduction`. Title:
-`I would like you to meet the house.` Sign-off: `Yours, / Jesper / Otrobonita AI Labs`.
+This section specified "The House": a letter of introduction at `/map`,
+above six room cards, one per mode. It shipped — `explain/intro.py`,
+`explain_render.build_intro()`, the `/map` route, the "House" nav item —
+and was then pulled back out: it came out wrong in practice. **Do not
+rebuild it.** None of `explain/intro.py`, `/map`, or a "House" nav entry
+should exist in this repo.
 
-Store as data in `explain/intro.py`. Do not paraphrase.
-
-Dear colleague —
-
-I am writing to introduce you to a house I have come to trust. I have lived in many codebases. Some of them were charming. Some of them were traps with good furniture. This one is neither a cathedral nor a studio apartment. It is a small house with six rooms and a rule so simple you can say it at the door: every request walks downstairs, and nobody skips a floor.
-
-The front door is the browser. Behind it sits a concierge — `app.py` — who only points. It does not cook. It does not argue. It does not keep secrets in its pockets.
-
-One floor down, the rooms are furnished by thin views — `render.py`. They lay the table. They do not do the math, they do not go outside, they do not decide what is true.
-
-Below that, the people who actually know things. Logic. Pure Python. You can ask them questions without starting the house, without the network, without a browser. That is how you know they are honest: they work in daylight.
-
-And at the cellar door: real tools. ruff, mypy, pytest, git, the load runner. Not portraits of tools. The tools themselves. If one is missing, the house says so. It will not pretend a pass.
-
-I recommend this arrangement without reservation, and I will tell you why: when something breaks, you know which floor to walk to. When someone new arrives, you can give them this letter instead of a week of folklore.
-
-The six rooms are enclosed below, so you are not lost. Landing is the first impression. Quality is the medical chart — you have already met the instruments. Explain is the friend who translates. Review is three colleagues who never quite agree. Git is how you ask the house about its own past. Load is Python writing a letter in another dialect, sending it out, and reading the reply — and always naming who spoke.
-
-One language built the house. Everything else is generated, headed, and named. That is not a slogan. It is the lock on the cellar door.
-
-Walk through. The rooms will introduce themselves.
-
-**Enclosed floor plan.** Heading: `Six rooms. One language. Nobody skips a floor.` The stack chips remain: browser → app.py → render.py → logic → real tools. Six room cards, in this order, each linking to its section:
-
-| # | Room | One line |
-|---|------|----------|
-| 01 | Landing | The first impression. A heart of sine and cosine, a wordmark Python owns. No clip-art in a drawer. |
-| 02 | Quality | The medical chart. Eight real instruments, read aloud. If one is missing, the house says so — never a fake pass. |
-| 03 | Explain | The friend who translates. What changed, why it matters, what could go wrong — in the language you already speak. No network. |
-| 04 | Review | Three colleagues who never quite agree. They read real diffs. The raw patch is one door away if you want to argue. |
-| 05 | Git | Ask the house about its own past. log, show, blame — a conversation, not decoration. Beside it, a hallway of how not to live. |
-| 06 | Load | Python writes a letter in another dialect, sends it out, and reads the reply. The speaker is always named. |
-
-Keep the file paths on the cards (`art/heart.py`, `panel/telemetry.py`, …). The letter explains; the cards point.
+The section number is kept (empty, rather than renumbering §10/§11) so
+existing `Manifest: docs/spec-love.md §N` commit trailers still point at
+the section they actually cited.
 
 ---
 
@@ -412,7 +383,7 @@ letter.
   the parametric heart (§1). Draw, fill, 8 beats, stop.
 - No row of blue links under the mark. Navigation is a **top menu**: tiny
   I ❤ PY mark on the **left** (always home), section names in a row
-  (Letter, Curve, Quality, Explain, House, Review, Git, Load, Listen),
+  (Letter, Curve, Quality, Explain, Review, Git, Load, Listen),
   GitHub as an outline chip. **Not tabs.** The old NiceGUI tab strip is
   gone. Not a marketing header of default `ui.link`s.
 
@@ -492,7 +463,7 @@ Do **not** assume the reader knows Glaser. The mark is famous; the name is not. 
 
 These two notes are **instructions to the coding agent**. They must not appear on the public page, in the modal, or in `curve_copy.py`.
 
-- The rooms used to be tabs. Lift them into a **top menu**: the mark on the left — I ❤ PY, always a way home — and Letter, Curve, Quality, House on the bar. Kill the Quasar tab strip.
+- The rooms used to be tabs. Lift them into a **top menu**: the mark on the left — I ❤ PY, always a way home — and Letter, Curve, Quality on the bar. Kill the Quasar tab strip.
 - The work lives in **cards**. Not a dashboard, not a dump of command output. Each card names the tool, says what it is in English, shows the actual run, and offers the docs. Nobody is assumed to already know ruff.
 
 On the page:
@@ -500,7 +471,7 @@ On the page:
 1. **Top menu, not tabs.** Sticky bar. Mark 40px-class on the **left**,
    sections as ink text (not Quasar tabs, not a blue link row). GitHub
    outline chip on the right. Mobile: hamburger, same mark.
-2. **Cards with explanation.** Quality (and House rooms): name, kind,
+2. **Cards with explanation.** Quality: name, kind,
    command, a plain-English sentence (`guide.what`), this-run output, docs
    link. Nobody is supposed to already know ruff. See §4.
 
@@ -514,8 +485,9 @@ is lifted **once landing + letter match §10**. Then, in order:
 3. Quality cards with glossary sentences + docs (§4)
 4. Formula button → modal lab; native sliders; this essay on `#curve` and in the modal
 5. `import this` execute outside the well (§3)
-6. House letter above the map (§9)
-7. Heart draw / 8 beats / 10px nudge (§1) if not done in step 1
+6. Heart draw / 8 beats / 10px nudge (§1) if not done in step 1
+
+(§9 dropped from this list — see §9's own note. It shipped, then was removed.)
 
 Manifest each commit: `docs/spec-love.md §N`.
 

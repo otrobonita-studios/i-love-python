@@ -9,7 +9,6 @@ executed for real. Nothing is simulated; where something cannot run
 from nicegui import app, ui
 
 from art import favicon as art_favicon
-from art import links as art_links
 from art import render as art_render
 from explain import render as explain_render
 from git_discipline import render as git_render
@@ -68,12 +67,6 @@ def explain_page() -> None:
         explain_render.build_explain_tab()
 
 
-@ui.page("/map")
-def house_page() -> None:
-    chrome()
-    explain_render.build_intro()
-
-
 @ui.page("/review")
 def review_page() -> None:
     chrome()
@@ -98,11 +91,7 @@ def load_page() -> None:
 @ui.page("/listen")
 def listen_page() -> None:
     chrome()
-    with ui.element("section").classes("ilp-letter"):
-        ui.label("Listen").classes("ilp-letter-title")
-        ui.link("Podcast", art_links.PODCAST_HREF, new_tab=True).classes("ilp-nav-item").props(
-            "rel=noopener noreferrer"
-        )
+    art_render.render_podcast_section()
 
 
 ui.run(
