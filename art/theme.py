@@ -206,6 +206,13 @@ a:hover, a.ilp-link:hover, .nicegui-link:hover {{
   color: var(--accent-2) !important;
   text-decoration: underline;
 }}
+/* The heart inside an "I <3 XX" mark, isolated so the essay's inline
+   marks (I love NY, I love PY) can color just the glyph, not the words
+   around it. --q-accent is Quasar's own var, set by ui.colors(accent=
+   HEART_RED) in apply_theme() -- same red the curve itself is drawn in. */
+.hart {{
+  color: var(--q-accent);
+}}
 .q-header {{
   background: var(--surface) !important;
   color: var(--ink) !important;
@@ -433,6 +440,148 @@ a:hover, a.ilp-link:hover, .nicegui-link:hover {{
 }}
 .ilp-letter p {{
   margin: 0 0 1em;
+}}
+.ilp-slider-card {{
+  width: 100%;
+  background: {SURFACE};
+  border: 1px solid {HAIR};
+  border-radius: 16px;
+  padding: 1.1rem 1.4rem 1.35rem;
+  margin: 0 0 1.1rem;
+}}
+.ilp-slider-row {{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  margin: 0 0 0.4rem;
+}}
+.ilp-slider-label {{
+  font-family: Newsreader, Palatino, "Palatino Linotype", ui-serif, serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: {INK};
+}}
+.ilp-slider-value {{
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  color: {MUTED};
+  font-size: 0.95rem;
+  white-space: nowrap;
+}}
+.ilp-slider-caption {{
+  color: {MUTED};
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0.65rem 0 0;
+}}
+.ilp-slider {{
+  width: 100%;
+  padding: 0.4rem 0.15rem 0;
+}}
+.ilp-curve-wrap {{
+  position: relative;
+}}
+.ilp-dl-badge {{
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  background: {HEART_RED} !important;
+  color: #fff !important;
+  text-decoration: none !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+  transition: transform 0.15s ease;
+}}
+.ilp-dl-badge:hover {{
+  transform: scale(1.08);
+  text-decoration: none !important;
+}}
+.ilp-dl-badge .q-icon {{
+  font-size: 1.2rem;
+}}
+.ilp-player-card {{
+  width: 100%;
+  background: {SURFACE};
+  border: 1px solid {HAIR};
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 1rem;
+}}
+.ilp-player-row {{
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  width: 100%;
+}}
+.ilp-player-play.q-btn {{
+  width: 3.75rem;
+  height: 3.75rem;
+  min-height: 3.75rem;
+  background: {HEART_RED} !important;
+  color: #fff !important;
+  flex-shrink: 0;
+}}
+.ilp-player-play .q-icon {{
+  font-size: 1.6rem;
+}}
+.ilp-player-body {{
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}}
+.ilp-player-title {{
+  font-family: Newsreader, Palatino, "Palatino Linotype", ui-serif, serif;
+  font-size: 1.15rem;
+  color: {INK};
+}}
+.ilp-player-byline {{
+  color: {MUTED};
+  font-size: 0.92rem;
+  margin: 0.1rem 0 0.75rem;
+}}
+.ilp-player-track {{
+  position: relative;
+  width: 100%;
+  height: 4px;
+  background: var(--line);
+  border-radius: 999px;
+}}
+.ilp-player-fill {{
+  position: absolute;
+  inset: 0 auto 0 0;
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 999px;
+}}
+.ilp-player-thumb {{
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  background: var(--accent);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}}
+.ilp-player-times {{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}}
+.ilp-player-time {{
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.82rem;
+  color: {MUTED};
 }}
 .ilp-code {{
   font-family: "IBM Plex Mono", ui-monospace, monospace;
