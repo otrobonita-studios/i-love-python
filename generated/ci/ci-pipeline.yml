@@ -14,6 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Review and Git-discipline read this repo's real git log --
+          # actions/checkout defaults to a shallow, single-commit clone,
+          # which starves both of the history they need. Full clone.
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
