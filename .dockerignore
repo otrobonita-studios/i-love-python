@@ -1,0 +1,13 @@
+.git
+.venv
+__pycache__
+*.pyc
+.mypy_cache
+.ruff_cache
+.pytest_cache
+.pytest-tmp
+.hypothesis
+.coverage
+server.log
+tests
+generated/telemetry
