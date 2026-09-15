@@ -35,16 +35,19 @@ def test_nav_items_are_sections_not_tabs() -> None:
     labels = [name for name, _href in NAV_ITEMS]
     assert labels == [
         "Letter",
-        "Curve",
-        "Quality",
+        "Its heart",
+        "Telemetry",
         "Explain",
-        "House",
         "Review",
-        "Git",
+        "Ask Git",
         "Load",
-        "Listen",
+        "Podcasts",
     ]
-    assert dict(NAV_ITEMS)["House"] == "/map"
+    assert dict(NAV_ITEMS)["Its heart"] == "/curve"
+    assert dict(NAV_ITEMS)["Telemetry"] == "/quality"
+    assert dict(NAV_ITEMS)["Ask Git"] == "/git"
+    assert dict(NAV_ITEMS)["Podcasts"] == "/listen"
+    assert "House" not in labels
     assert all(href.startswith("/") for _name, href in NAV_ITEMS)
     assert not any("#" in href for _name, href in NAV_ITEMS)
 
