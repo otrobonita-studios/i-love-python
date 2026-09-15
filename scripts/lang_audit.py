@@ -64,8 +64,19 @@ GENERATED_MARKERS = (
     b"; GENERATED",
 )
 
-# Directories we never scan.
-SKIP_DIRS = {".git", ".venv", "node_modules", ".mypy_cache", ".ruff_cache", ".pytest_cache"}
+# Directories we never scan. .pytest-tmp is pytest's --basetemp (see
+# scripts/install_hooks.py) -- gitignored, but its own fixtures include
+# non-Python files on purpose (lang_audit's tests need something to flag),
+# and a crashed run can leave them behind for the next scan to trip over.
+SKIP_DIRS = {
+    ".git",
+    ".venv",
+    "node_modules",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".pytest_cache",
+    ".pytest-tmp",
+}
 
 HEADER_BYTES = 256
 
