@@ -25,3 +25,7 @@ server.log
 .vscode/
 .idea/
 .DS_Store
+# Podcast episodes are CDN-hosted (art/podcast_copy.py's Episode.href) and
+# streamed by the browser, not bundled -- a local scratch copy for
+# listening/verifying before wiring one in should never land in git.
+podcasts/
