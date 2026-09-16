@@ -17,4 +17,11 @@ generated/telemetry/
 .hypothesis/
 server.log
 *.egg-info/
+# Editor and agent-tool configs are local, not repo content. This tree
+# names no vendor: AGENTS.md is the neutral standard, and any tool that
+# wants its own directory can keep it untracked.
+.claude/
+.cursor/
+.vscode/
+.idea/
 .DS_Store
