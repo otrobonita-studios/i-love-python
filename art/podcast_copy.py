@@ -1,15 +1,12 @@
 """Canonical /listen ("Podcasts") page copy: kicker, headline, lede, episodes.
 
 EPISODES is a plain tuple -- appending the next recording is a one-line
-addition here, nothing in render.py changes. First entry is the original
-walkthrough; more are expected.
+addition here, nothing in render.py changes.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-
-from art.links import PODCAST_HREF
 
 _CDN_BASE = "https://cdn-media.otrobonita.com/audio/podcasts/i-love-python"
 _BYLINE = "Jesper Karlsson · Otrobonita AI Labs"
@@ -18,9 +15,11 @@ KICKER = "PODCAST SERIES"
 TITLE_LINE_1 = "Learn Python"
 TITLE_LINE_2 = "by Car"
 LEDE = (
-    "A relaxed transition into Python for the seasoned developer — nine "
-    "conversations, recorded for the original repo, still the best way to "
-    "hear the argument in Jesper's voice."
+    "A relaxed transition into Python for the seasoned developer — "
+    "conversations recorded so you can pick out what's valuable, slow and "
+    "easy. I use this format to make better use of driving hours: shallow "
+    "enough that you can still focus on traffic, so you're a little less "
+    "surprised when you actually get to the keyboard."
 )
 
 
@@ -34,11 +33,6 @@ class Episode:
 
 
 EPISODES: tuple[Episode, ...] = (
-    Episode(
-        title="I love Python — the walkthrough",
-        byline=_BYLINE,
-        href=PODCAST_HREF,
-    ),
     Episode(
         title="The Zen of Python Philosophy",
         byline=_BYLINE,
