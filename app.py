@@ -9,6 +9,7 @@ executed for real. Nothing is simulated; where something cannot run
 from nicegui import app, ui
 
 from art import favicon as art_favicon
+from art import heart_api
 from art import render as art_render
 from explain import render as explain_render
 from git_discipline import render as git_render
@@ -27,6 +28,7 @@ def health() -> dict[str, str]:
 
 panel_render.register_api()
 art_render.register_routes()
+heart_api.register_routes()
 
 
 def chrome() -> None:
