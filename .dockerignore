@@ -11,3 +11,7 @@ __pycache__
 server.log
 tests
 generated/telemetry
+# Local scratch copies of podcast audio -- the app streams episodes from
+# the CDN (art/podcast_copy.py), never reads these; ~350MB that has no
+# business bloating the image or the build context.
+podcasts/
