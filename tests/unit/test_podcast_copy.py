@@ -5,9 +5,9 @@ from art.links import PODCAST_HREF
 
 
 def test_headline_and_lede_are_canonical() -> None:
-    assert podcast_copy.KICKER == "PODCAST"
-    assert podcast_copy.TITLE_LINE_1 == "Forty minutes with"
-    assert podcast_copy.TITLE_LINE_2 == "the thing itself."
+    assert podcast_copy.KICKER == "PODCAST SERIES"
+    assert podcast_copy.TITLE_LINE_1 == "Learn Python"
+    assert podcast_copy.TITLE_LINE_2 == "by Car"
     assert "Jesper" in podcast_copy.LEDE
 
 

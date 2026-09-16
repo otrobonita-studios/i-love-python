@@ -14,12 +14,13 @@ from art.links import PODCAST_HREF
 _CDN_BASE = "https://cdn-media.otrobonita.com/audio/podcasts/i-love-python"
 _BYLINE = "Jesper Karlsson · Otrobonita AI Labs"
 
-KICKER = "PODCAST"
-TITLE_LINE_1 = "Forty minutes with"
-TITLE_LINE_2 = "the thing itself."
+KICKER = "PODCAST SERIES"
+TITLE_LINE_1 = "Learn Python"
+TITLE_LINE_2 = "by Car"
 LEDE = (
-    "The long-form walkthrough of what this is and why — recorded for the "
-    "original repo, still the best way to hear the argument in Jesper's voice."
+    "A relaxed transition into Python for the seasoned developer — nine "
+    "conversations, recorded for the original repo, still the best way to "
+    "hear the argument in Jesper's voice."
 )
 
 
